@@ -7,8 +7,27 @@
 		<link rel="stylesheet" type="text/css" href="style/light.css" title="light">
 		<link rel="alternate stylesheet" type="text/css" href="style/dark.css" title="dark">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<!-- scripts! all of the scripts! -->
+		<script src="script/tabmanager.js" defer></script>
 	</head>
 	<body>
-
+		<div>
+			<button onclick="SwitchTab(0, 0)">Options</button>
+			<button onclick="SwitchTab(0, 1)">Inventory</button>
+			<button onclick="SwitchTab(0, 2)">Machine Room</button>
+			<button onclick="SwitchTab(0, 3)">Crafting Room</button>
+		</div>
+		<div id="Tab0_0">
+			Options
+		</div>
+		<div id="Tab0_1">
+			Inventory
+		</div>
+		<div id="Tab0_2">
+			Machine Room
+		</div>
+		<div id="Tab0_3">
+			Crafting Room
+		</div>
 	</body>
 </html>
