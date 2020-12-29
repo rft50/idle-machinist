@@ -1,48 +1,161 @@
 <!DOCTYPE html>
 <html>
 	<body>
-		<svg>
-			<defs>
-				<linearGradient id="primary">
-					<stop offset="0%" style="stop-color:rgba(185,149,89,1)"/>
-				</linearGradient>
-				<linearGradient id="primaryGrain">
-					<stop offset="0%" style="stop-color:rgba(210,174,114,1)"/>
-				</linearGradient>
-				<linearGradient id="secondary">
-					<stop offset="0%" style="stop-color:rgba(185,149,89,1)"/>
-				</linearGradient>
-				<linearGradient id="secondaryGrain">
-					<stop offset="0%" style="stop-color:rgba(210,174,114,1)"/>
-				</linearGradient>
-			</defs>
+		<div>
+			Wooden Gear (Oak)
+			<br>
+			<svg width="100" height="100">
+				<defs>
+					<linearGradient id="primary1">
+						<stop offset="0%" style="stop-color:rgba(185,149,89,1)"/>
+					</linearGradient>
+					<linearGradient id="primaryGrain1">
+						<stop offset="0%" style="stop-color:rgba(210,174,114,1)"/>
+					</linearGradient>
+					<linearGradient id="secondary1">
+						<stop offset="0%" style="stop-color:rgba(185,149,89,1)"/>
+					</linearGradient>
+					<linearGradient id="secondaryGrain1">
+						<stop offset="0%" style="stop-color:rgba(210,174,114,1)"/>
+					</linearGradient>
+				</defs>
 
-			<filter id="grainBlur">
-				<feGaussianBlur in="SourceGraphic" stdDeviation="0.5"/>
-			</filter>
+				<filter id="grainBlur">
+					<feGaussianBlur in="SourceGraphic" stdDeviation="0.5"/>
+				</filter>
 
-			<g fill="url(#primary)" stroke="black" stroke-width="1">
-				<polygon points="45,5 55,5 55,45 95,45 95,55 55,55 55,95 45,95 45,55 5,55 5,45 45,45"/>
-				<polygon points="43,50 15,78 22,85 50,57 78,85 85,78 57,50 85,22 78,15 50,43 22,15 15,22"/>
-				<circle cx="50" cy="50" r="30"/>
-			</g>
-			<g stroke="url(#primaryGrain)" filter="url(#grainBlur)" fill="none" stroke-width="1">
-				<path d="M 50 50 m 0 30 a 50 50 0 0 1 0 -60"/>
-				<path d="M 50 50 m -21 21 a 65 65 0 0 1 0 -42"/>
-				<path d="M 50 50 m 21 21 a 35 35 0 0 1 0 -42"/>
-			</g>
+				<g fill="url(#primary1)" stroke="black" stroke-width="1">
+					<polygon points="45,5 55,5 55,45 95,45 95,55 55,55 55,95 45,95 45,55 5,55 5,45 45,45"/>
+					<polygon points="43,50 15,78 22,85 50,57 78,85 85,78 57,50 85,22 78,15 50,43 22,15 15,22"/>
+					<circle cx="50" cy="50" r="30"/>
+				</g>
+				<g stroke="url(#primaryGrain1)" filter="url(#grainBlur)" fill="none" stroke-width="1">
+					<path d="M 50 50 m 0 30 a 50 50 0 0 1 0 -60"/>
+					<path d="M 50 50 m -21 21 a 65 65 0 0 1 0 -42"/>
+					<path d="M 50 50 m 21 21 a 35 35 0 0 1 0 -42"/>
+				</g>
 
-			<g fill="url(#secondary)" stroke="black" stroke-width="1">
-				<circle cx="50" cy="50" r="10"/>
-			</g>
-			<g stroke="url(#secondaryGrain)" filter="url(#grainBlur)" fill="none" stroke-width="1">
-				<path d="M 50 50 m -7 7 a 20 20 0 0 1 14 -14"/>
-			</g>
+				<g fill="url(#secondary1)" stroke="black" stroke-width="1">
+					<circle cx="50" cy="50" r="10"/>
+				</g>
+				<g stroke="url(#secondaryGrain1)" filter="url(#grainBlur)" fill="none" stroke-width="1">
+					<path d="M 50 50 m -7 7 a 20 20 0 0 1 14 -14"/>
+				</g>
 
-			<g fill="none" stroke="black" stroke-width="1">
-				<circle cx="50" cy="50" r="30"/>
-				<circle cx="50" cy="50" r="10"/>
-			</g>
-		</svg>
+				<g fill="none" stroke="black" stroke-width="1">
+					<circle cx="50" cy="50" r="30"/>
+					<circle cx="50" cy="50" r="10"/>
+				</g>
+			</svg>
+		</div>
+		<div>
+			Metal Gear (Copper)
+			<br>
+			<svg width="100" height="100">
+				<defs>
+					<radialGradient id="primary2" cx="60%" cy="60%" fr="45%" r="90%">
+						<stop offset="0%" style="stop-color:rgba(255,180,28,1)"/>
+						<stop offset="100%" style="stop-color:white"/>
+					</radialGradient>
+					<radialGradient id="secondary2" cx="60%" cy="60%" fr="40%" r="90%">
+						<stop offset="0%" style="stop-color:rgba(255,180,28,1)"/>
+						<stop offset="100%" style="stop-color:white"/>
+					</radialGradient>
+				</defs>
+
+				<g fill="url(#primary2)" stroke="black" stroke-width="1">
+					<polygon points="45,5 55,5 55,45 95,45 95,55 55,55 55,95 45,95 45,55 5,55 5,45 45,45"/>
+					<polygon points="43,50 15,78 22,85 50,57 78,85 85,78 57,50 85,22 78,15 50,43 22,15 15,22"/>
+					<circle cx="50" cy="50" r="30"/>
+				</g>
+
+				<g fill="url(#secondary2)" stroke="black" stroke-width="1">
+					<circle cx="50" cy="50" r="10"/>
+				</g>
+
+				<g fill="none" stroke="black" stroke-width="1">
+					<circle cx="50" cy="50" r="30"/>
+					<circle cx="50" cy="50" r="10"/>
+				</g>
+			</svg>
+		</div>
+		<div>
+			Crystal Gear (Ruby)
+			<br>
+			<svg width="100" height="100">
+				<defs>
+					<linearGradient id="primary3">
+						<stop offset="0%" style="stop-color:rgba(191,0,0,1)"/>
+					</linearGradient>
+					<linearGradient id="primarySheen3">
+						<stop offset="0%" style="stop-color:rgba(255,0,0,1)"/>
+					</linearGradient>
+					<linearGradient id="primarySheenX3" gradientTransform="rotate(45)">
+						<stop offset="0%" style="stop-color:rgba(191,0,0,1)"/>
+						<stop offset="100%" style="stop-color:rgba(255,0,0,1)"/>
+					</linearGradient>
+					<linearGradient id="secondary3">
+						<stop offset="0%" style="stop-color:rgba(191,0,0,1)"/>
+					</linearGradient>
+					<linearGradient id="secondarySheen3">
+						<stop offset="0%" style="stop-color:rgba(255,0,0,1)"/>
+					</linearGradient>
+					<linearGradient id="secondarySheenX3" gradientTransform="rotate(45)">
+						<stop offset="0%" style="stop-color:rgba(191,0,0,1)"/>
+						<stop offset="100%" style="stop-color:rgba(255,0,0,1)"/>
+					</linearGradient>
+				</defs>
+
+				<mask id="circleMask">
+					<rect width="100" height="100"/>
+					<circle cx="50" cy="50" r="30" fill="white"/>
+				</mask>
+				<mask id="smallMask">
+					<rect width="100" height="100"/>
+					<circle cx="50" cy="50" r="10" fill="white"/>
+				</mask>
+
+				<g fill="url(#primary3)" stroke="black" stroke-width="1">
+					<polygon points="45,5 55,5 55,45 95,45 95,55 55,55 55,95 45,95 45,55 5,55 5,45 45,45"/>
+					<polygon points="43,50 15,78 22,85 50,57 78,85 85,78 57,50 85,22 78,15 50,43 22,15 15,22"/>
+					<g mask="url(#circleMask)" stroke-width="0">
+						<rect x="12.5" y="12.5" width="25" height="25" fill="url(#primarySheenX3)"/>
+						<rect x="37.5" y="12.5" width="25" height="25" fill="url(#primarySheenX3)"/>
+						<rect x="62.5" y="12.5" width="25" height="25" fill="url(#primarySheenX3)"/>
+						<rect x="12.5" y="37.5" width="25" height="25" fill="url(#primarySheenX3)"/>
+						<rect x="37.5" y="37.5" width="25" height="25" fill="url(#primarySheenX3)"/>
+						<rect x="62.5" y="37.5" width="25" height="25" fill="url(#primarySheenX3)"/>
+						<rect x="12.5" y="62.5" width="25" height="25" fill="url(#primarySheenX3)"/>
+						<rect x="37.5" y="62.5" width="25" height="25" fill="url(#primarySheenX3)"/>
+						<rect x="62.5" y="62.5" width="25" height="25" fill="url(#primarySheenX3)"/>
+					</g>
+					<g fill="none" stroke="url(#primarySheen3)" stroke-width="0.5" mask="url(#circleMask)">
+						<path d="M 0 37.5 H 100 M 0 62.5 H 100 M 37.5 0 V 100 M 62.5 0 V 100"/>
+						<circle cx="50" cy="50" r="29.5"/>
+					</g>
+				</g>
+
+				<g mask="url(#smallMask)" stroke-width="0">
+					<rect x="35" y="35" width="10" height="10" fill="url(#secondarySheenX3)"/>
+					<rect x="45" y="35" width="10" height="10" fill="url(#secondarySheenX3)"/>
+					<rect x="55" y="35" width="10" height="10" fill="url(#secondarySheenX3)"/>
+					<rect x="35" y="45" width="10" height="10" fill="url(#secondarySheenX3)"/>
+					<rect x="45" y="45" width="10" height="10" fill="url(#secondarySheenX3)"/>
+					<rect x="55" y="45" width="10" height="10" fill="url(#secondarySheenX3)"/>
+					<rect x="35" y="55" width="10" height="10" fill="url(#secondarySheenX3)"/>
+					<rect x="45" y="55" width="10" height="10" fill="url(#secondarySheenX3)"/>
+					<rect x="55" y="55" width="10" height="10" fill="url(#secondarySheenX3)"/>
+				</g>
+				<g fill="none" stroke="url(#secondarySheen3)" stroke-width="0.5" mask="url(#smallMask)">
+					<path d="M 0 45 H 100 M 0 55 H 100 M 45 0 V 100 M 55 0 V 100"/>
+					<circle cx="50" cy="50" r="9.5"/>
+				</g>
+
+				<g fill="none" stroke="black" stroke-width="1">
+					<circle cx="50" cy="50" r="30"/>
+					<circle cx="50" cy="50" r="10"/>
+				</g>
+			</svg>
+		</div>
 	</body>
 </html>
