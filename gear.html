@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<title>Idle Machinist Gears Page</title>
+		<script src="data/materials.js" defer></script>
+		<script src="script/geargenerator.js" defer></script>
+	</head>
 	<body>
 		<div>
 			Wooden Gear (Oak)
@@ -129,10 +134,10 @@
 						<rect x="37.5" y="62.5" width="25" height="25" fill="url(#primarySheenX3)"/>
 						<rect x="62.5" y="62.5" width="25" height="25" fill="url(#primarySheenX3)"/>
 					</g>
-					<g fill="none" stroke="url(#primarySheen3)" stroke-width="0.5" mask="url(#circleMask)">
-						<path d="M 0 37.5 H 100 M 0 62.5 H 100 M 37.5 0 V 100 M 62.5 0 V 100"/>
-						<circle cx="50" cy="50" r="29.5"/>
-					</g>
+				</g>
+				<g fill="none" stroke="url(#primarySheen3)" stroke-width="0.5" mask="url(#circleMask)">
+					<path d="M 0 37.5 H 100 M 0 62.5 H 100 M 37.5 0 V 100 M 62.5 0 V 100"/>
+					<circle cx="50" cy="50" r="29.5"/>
 				</g>
 
 				<g mask="url(#smallMask)" stroke-width="0">
@@ -156,6 +161,26 @@
 					<circle cx="50" cy="50" r="10"/>
 				</g>
 			</svg>
+		</div>
+		<div id="generated">
+			Generated Oak/Pine Gear
+			<br>
+			<button id="generate">Generate</button>
+			<br>
+			<script>
+				let div = document.getElementById("generated")
+				let button = document.getElementById("generate")
+				let gen = null
+
+				button.addEventListener("click", function() {
+					let x = GenerateGear(materials.Oak, materials.Pine, 4)
+					if (gen != null) {
+						div.removeChild(gen)
+					}
+					div.appendChild(x)
+					gen = x
+				})
+			</script>
 		</div>
 	</body>
 </html>
