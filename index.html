@@ -8,9 +8,14 @@
 		<link rel="alternate stylesheet" type="text/css" href="style/dark.css" title="dark">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<!-- scripts! all of the scripts! -->
+		<script src="script/geargenerator.js" defer></script>
 		<script src="script/tabmanager.js" defer></script>
+		<script src="data/materials.js" defer></script>
+		<script src="script/script.js" defer></script>
+		<script src="script/machineshop.js" defer></script>
 	</head>
 	<body>
+		<p>You have <text id="money">$0</text></p>
 		<div>
 			<button onclick="SwitchTab(0, 0)">Options</button>
 			<button onclick="SwitchTab(0, 1)">Inventory</button>
@@ -24,7 +29,21 @@
 			Inventory
 		</div>
 		<div id="Tab0_2">
-			Machine Room
+			<div class="flex-grid">
+				<div id="machine-inv" class="column">
+					Machine Room Inventory
+				</div>
+				<div id="machine-content" class="column">
+					Machine Room Content
+				</div>
+				<div id="machine-upgrades" class="column">
+					<p id="machine-rots">This gearbox is producing 0 rot/s, worth $0 total</p>
+					<p id="machine-lubricate">This gearbox has been lubricated 0 times, so its production is multiplied by 1</p>
+					<button id="machine-lubricate-button">Lubricate ($100, 1.1x)</button>
+					<p id="machine-carve">This gearbox has been carved 0 times, so it can hold 10 gears</p>
+					<button id="machine-carve-button">Carve ($1000, +1 gear)</button>
+				</div>
+			</div>
 		</div>
 		<div id="Tab0_3">
 			Crafting Room
