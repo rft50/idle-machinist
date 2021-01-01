@@ -11,6 +11,8 @@ function GenerateGear(prim, sec, id) {
 
 	// declare some shared variables
 	let p, ps, g1, g2, temp
+	let ap = prim.color.length == 4 ? prim.color[3] : 1
+	let as = sec.color.length == 4 ? sec.color[3] : 1
 
 	// color definitions
 	let defs = document.createElementNS("http://www.w3.org/2000/svg", "defs")
@@ -21,14 +23,14 @@ function GenerateGear(prim, sec, id) {
 			p.id = "primary" + id
 			ps = document.createElementNS("http://www.w3.org/2000/svg", "stop")
 			ps.setAttribute("offset", "0%")
-			ps.setAttribute("style", `stop-color:rgba(${prim.color[0]},${prim.color[1]},${prim.color[2]},1)`)
+			ps.setAttribute("style", `stop-color:rgba(${prim.color[0]},${prim.color[1]},${prim.color[2]},${ap})`)
 			p.appendChild(ps)
 			defs.appendChild(p)
 			p = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient")
 			p.id = "primaryGrain" + id
 			ps = document.createElementNS("http://www.w3.org/2000/svg", "stop")
 			ps.setAttribute("offset", "0%")
-			ps.setAttribute("style", `stop-color:rgba(${prim.color[0]+25},${prim.color[1]+25},${prim.color[2]+25},1)`)
+			ps.setAttribute("style", `stop-color:rgba(${prim.color[0]+25},${prim.color[1]+25},${prim.color[2]+25},${ap})`)
 			p.appendChild(ps)
 			defs.appendChild(p)
 			break;
@@ -41,11 +43,11 @@ function GenerateGear(prim, sec, id) {
 			p.setAttribute("r", "90%")
 			ps = document.createElementNS("http://www.w3.org/2000/svg", "stop")
 			ps.setAttribute("offset", "0%")
-			ps.setAttribute("style", `stop-color:rgba(${prim.color[0]},${prim.color[1]},${prim.color[2]},1)`)
+			ps.setAttribute("style", `stop-color:rgba(${prim.color[0]},${prim.color[1]},${prim.color[2]},${ap})`)
 			p.appendChild(ps)
 			ps = document.createElementNS("http://www.w3.org/2000/svg", "stop")
 			ps.setAttribute("offset", "100%")
-			ps.setAttribute("style", `stop-color:white`)
+			ps.setAttribute("style", `stop-color:rgba(255,255,255,${ap})`)
 			p.appendChild(ps)
 			defs.appendChild(p)
 			break;
@@ -54,14 +56,14 @@ function GenerateGear(prim, sec, id) {
 			p.id = "primary" + id
 			ps = document.createElementNS("http://www.w3.org/2000/svg", "stop")
 			ps.setAttribute("offset", "0%")
-			ps.setAttribute("style", `stop-color:rgba(${Math.floor(prim.color[0]*.75)},${Math.floor(prim.color[1]*.75)},${Math.floor(prim.color[2]*.75)},1)`)
+			ps.setAttribute("style", `stop-color:rgba(${Math.floor(prim.color[0]*.75)},${Math.floor(prim.color[1]*.75)},${Math.floor(prim.color[2]*.75)},${ap})`)
 			p.appendChild(ps)
 			defs.appendChild(p)
 			p = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient")
 			p.id = "primarySheen" + id
 			ps = document.createElementNS("http://www.w3.org/2000/svg", "stop")
 			ps.setAttribute("offset", "0%")
-			ps.setAttribute("style", `stop-color:rgba(${prim.color[0]},${prim.color[1]},${prim.color[2]},1)`)
+			ps.setAttribute("style", `stop-color:rgba(${prim.color[0]},${prim.color[1]},${prim.color[2]},${ap})`)
 			p.appendChild(ps)
 			defs.appendChild(p)
 			p = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient")
@@ -69,11 +71,11 @@ function GenerateGear(prim, sec, id) {
 			p.setAttribute("gradientTransform", "rotate(45)")
 			ps = document.createElementNS("http://www.w3.org/2000/svg", "stop")
 			ps.setAttribute("offset", "0%")
-			ps.setAttribute("style", `stop-color:rgba(${Math.floor(prim.color[0]*.75)},${Math.floor(prim.color[1]*.75)},${Math.floor(prim.color[2]*.75)},1)`)
+			ps.setAttribute("style", `stop-color:rgba(${Math.floor(prim.color[0]*.75)},${Math.floor(prim.color[1]*.75)},${Math.floor(prim.color[2]*.75)},${ap})`)
 			p.appendChild(ps)
 			ps = document.createElementNS("http://www.w3.org/2000/svg", "stop")
 			ps.setAttribute("offset", "100%")
-			ps.setAttribute("style", `stop-color:rgba(${prim.color[0]},${prim.color[1]},${prim.color[2]},1)`)
+			ps.setAttribute("style", `stop-color:rgba(${prim.color[0]},${prim.color[1]},${prim.color[2]},${ap})`)
 			p.appendChild(ps)
 			defs.appendChild(p)
 			break;
@@ -84,14 +86,14 @@ function GenerateGear(prim, sec, id) {
 			p.id = "secondary" + id
 			ps = document.createElementNS("http://www.w3.org/2000/svg", "stop")
 			ps.setAttribute("offset", "0%")
-			ps.setAttribute("style", `stop-color:rgba(${sec.color[0]},${sec.color[1]},${sec.color[2]},1)`)
+			ps.setAttribute("style", `stop-color:rgba(${sec.color[0]},${sec.color[1]},${sec.color[2]},${as})`)
 			p.appendChild(ps)
 			defs.appendChild(p)
 			p = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient")
 			p.id = "secondaryGrain" + id
 			ps = document.createElementNS("http://www.w3.org/2000/svg", "stop")
 			ps.setAttribute("offset", "0%")
-			ps.setAttribute("style", `stop-color:rgba(${sec.color[0]+25},${sec.color[1]+25},${sec.color[2]+25},1)`)
+			ps.setAttribute("style", `stop-color:rgba(${sec.color[0]+25},${sec.color[1]+25},${sec.color[2]+25},${as})`)
 			p.appendChild(ps)
 			defs.appendChild(p)
 			break;
@@ -104,11 +106,11 @@ function GenerateGear(prim, sec, id) {
 			p.setAttribute("r", "90%")
 			ps = document.createElementNS("http://www.w3.org/2000/svg", "stop")
 			ps.setAttribute("offset", "0%")
-			ps.setAttribute("style", `stop-color:rgba(${sec.color[0]},${sec.color[1]},${sec.color[2]},1)`)
+			ps.setAttribute("style", `stop-color:rgba(${sec.color[0]},${sec.color[1]},${sec.color[2]},${as})`)
 			p.appendChild(ps)
 			ps = document.createElementNS("http://www.w3.org/2000/svg", "stop")
 			ps.setAttribute("offset", "100%")
-			ps.setAttribute("style", `stop-color:white`)
+			ps.setAttribute("style", `stop-color:rgba(255,255,255,${as})`)
 			p.appendChild(ps)
 			defs.appendChild(p)
 			break;
@@ -117,14 +119,14 @@ function GenerateGear(prim, sec, id) {
 			p.id = "secondary" + id
 			ps = document.createElementNS("http://www.w3.org/2000/svg", "stop")
 			ps.setAttribute("offset", "0%")
-			ps.setAttribute("style", `stop-color:rgba(${Math.floor(sec.color[0]*.75)},${Math.floor(sec.color[1]*.75)},${Math.floor(sec.color[2]*.75)},1)`)
+			ps.setAttribute("style", `stop-color:rgba(${Math.floor(sec.color[0]*.75)},${Math.floor(sec.color[1]*.75)},${Math.floor(sec.color[2]*.75)},${as})`)
 			p.appendChild(ps)
 			defs.appendChild(p)
 			p = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient")
 			p.id = "secondarySheen" + id
 			ps = document.createElementNS("http://www.w3.org/2000/svg", "stop")
 			ps.setAttribute("offset", "0%")
-			ps.setAttribute("style", `stop-color:rgba(${sec.color[0]},${sec.color[1]},${sec.color[2]},1)`)
+			ps.setAttribute("style", `stop-color:rgba(${sec.color[0]},${sec.color[1]},${sec.color[2]},${as})`)
 			p.appendChild(ps)
 			defs.appendChild(p)
 			p = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient")
@@ -132,11 +134,11 @@ function GenerateGear(prim, sec, id) {
 			p.setAttribute("gradientTransform", "rotate(45)")
 			ps = document.createElementNS("http://www.w3.org/2000/svg", "stop")
 			ps.setAttribute("offset", "0%")
-			ps.setAttribute("style", `stop-color:rgba(${Math.floor(sec.color[0]*.75)},${Math.floor(sec.color[1]*.75)},${Math.floor(sec.color[2]*.75)},1)`)
+			ps.setAttribute("style", `stop-color:rgba(${Math.floor(sec.color[0]*.75)},${Math.floor(sec.color[1]*.75)},${Math.floor(sec.color[2]*.75)},${as})`)
 			p.appendChild(ps)
 			ps = document.createElementNS("http://www.w3.org/2000/svg", "stop")
 			ps.setAttribute("offset", "100%")
-			ps.setAttribute("style", `stop-color:rgba(${sec.color[0]},${sec.color[1]},${sec.color[2]},1)`)
+			ps.setAttribute("style", `stop-color:rgba(${sec.color[0]},${sec.color[1]},${sec.color[2]},${as})`)
 			p.appendChild(ps)
 			defs.appendChild(p)
 			break;
@@ -306,21 +308,25 @@ function GenerateGear(prim, sec, id) {
 	}
 
 	// finalization
-	{
+	if (ap != 0 || as != 0) {
 		let g = document.createElementNS("http://www.w3.org/2000/svg", "g")
 		g.setAttribute("fill", "none")
 		g.setAttribute("stroke", "black")
 		g.setAttribute("stroke-width", "1")
-		let temp = document.createElementNS("http://www.w3.org/2000/svg", "circle")
-		temp.setAttribute("cx", "50")
-		temp.setAttribute("cy", "50")
-		temp.setAttribute("r", "30")
-		g.appendChild(temp)
-		temp = document.createElementNS("http://www.w3.org/2000/svg", "circle")
-		temp.setAttribute("cx", "50")
-		temp.setAttribute("cy", "50")
-		temp.setAttribute("r", "10")
-		g.appendChild(temp)
+		if (ap != 0) {
+			temp = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+			temp.setAttribute("cx", "50")
+			temp.setAttribute("cy", "50")
+			temp.setAttribute("r", "30")
+			g.appendChild(temp)
+		}
+		if (as != 0) {
+			temp = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+			temp.setAttribute("cx", "50")
+			temp.setAttribute("cy", "50")
+			temp.setAttribute("r", "10")
+			g.appendChild(temp)
+		}
 		svg.appendChild(g)
 	}
 

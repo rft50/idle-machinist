@@ -38,3 +38,8 @@ var materials = {
 		}
 	}
 }
+
+var voidMaterial = {
+	material: "void",
+	color: [0, 0, 0, 0]
+}
