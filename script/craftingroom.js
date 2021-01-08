@@ -31,9 +31,42 @@
 			switch (part.type) {
 				case "raw":
 					render = GenerateMaterial(part.material, id)
+					break;
+				case "gear-rim":
+					render = GenerateGear(part.material, voidMaterial, id)
+					break;
+				case "gear-core":
+					render = GenerateGear(voidMaterial, part.material, id)
+					break;
 			}
 			inv.appendChild(render)
 			id++
+		}
+	}
+
+	// Finds all items in the part inventory that match the definition,
+	// up to the max count.
+	// Returns an array of indexes, lowest to highest.
+	function findMaterials(definition, max) {
+		let indexes = []
+		for (let i = 0; i < partInventory.length; i++) {
+			let part = partInventory[i]
+			if (part.type == definition.type && part.material == definition.material) {
+				indexes.push(i)
+				if (indexes.length >= max) {
+					break
+				}
+			}
+		}
+		return indexes
+	}
+
+	// Bulk-removes all indexes specifies.
+	// Removes them highest to lowest index, so as to prevent data corruption.
+	function removeMaterials(indexes) {
+		indexes.sort((a, b) => b - a) // sort highest to lowest
+		for (let idx of indexes) {
+			partInventory.splice(idx, 1)
 		}
 	}
 
@@ -64,8 +97,8 @@
 		buttons[2].disabled = matCount < 1
 	}
 
-	function setupButtons(buttons, group) {
-		buttons[0].addEventListener("click", function() {
+	function setupButtons(lock, buttons, group) {
+		buttons[0].addEventListener("click", function() { // buy button
 			let mat = selectedMaterial
 			if (TrySpendMoney(mat.cost)) {
 				partInventory.push({
@@ -75,6 +108,40 @@
 			}
 			refreshParts()
 			displayMaterial(mat, group[0], group[1], buttons)
+		})
+		buttons[1].addEventListener("click", function() { // gear rim button
+			if (selectedMaterial.material == lock) {
+				var parts = findMaterials({
+					type: "raw",
+					material: selectedMaterial
+				}, 2)
+				if (parts.length == 2) {
+					removeMaterials(parts)
+					partInventory.push({
+						type: "gear-rim",
+						material: selectedMaterial
+					})
+					refreshParts()
+					displayMaterial(selectedMaterial, group[0], group[1], buttons)
+				}
+			}
+		})
+		buttons[2].addEventListener("click", function() { // gear core button
+			if (selectedMaterial.material == lock) {
+				var parts = findMaterials({
+					type: "raw",
+					material: selectedMaterial
+				}, 1)
+				if (parts.length == 1) {
+					removeMaterials(parts)
+					partInventory.push({
+						type: "gear-core",
+						material: selectedMaterial
+					})
+					refreshParts()
+					displayMaterial(selectedMaterial, group[0], group[1], buttons)
+				}
+			}
 		})
 	}
 
@@ -103,5 +170,5 @@
 		}
 	}
 
-	setupButtons(carpenterButtons, [carpenterDisplay, carpenterStats])
+	setupButtons("wood", carpenterButtons, [carpenterDisplay, carpenterStats])
 }
