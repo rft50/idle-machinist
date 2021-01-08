@@ -1,4 +1,5 @@
 "use strict"
+// inventories
 let gearInventory = [
 	{
 		primary: materials.Oak,
@@ -8,7 +9,27 @@ let gearInventory = [
 		lifetime: 1200
 	}
 ]
+let partInventory = [
+	{
+		type: "raw",
+		material: materials.Oak
+	}
+]
 let money = 0
+
+// gamestate
+let activeGearbox = {
+	bonus: 0,
+	baseMax: 10,
+	operationMin: 0,
+	upgrades: {
+		lubricate: 0,
+		carve: 0
+	},
+	gears: [],
+	rots: 0,
+	nextUpdate: Infinity
+}
 
 let moneyDisplay = document.getElementById("money")
 

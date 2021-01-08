@@ -14,14 +14,14 @@ function GenerateMaterial(mat, id) {
 			p.id = "material" + id
 			ps = document.createElementNS("http://www.w3.org/2000/svg", "stop")
 			ps.setAttribute("offset", "0%")
-			ps.setAttribute("style", `stop-color:rgba(${mat.color[0]},${mat.color[1]},${mat.color[2]},${ap})`)
+			ps.setAttribute("style", `stop-color:rgba(${mat.color[0]},${mat.color[1]},${mat.color[2]},1)`)
 			p.appendChild(ps)
 			defs.appendChild(p)
 			p = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient")
 			p.id = "materialGrain" + id
 			ps = document.createElementNS("http://www.w3.org/2000/svg", "stop")
 			ps.setAttribute("offset", "0%")
-			ps.setAttribute("style", `stop-color:rgba(${mat.color[0]+25},${mat.color[1]+25},${mat.color[2]+25},${ap})`)
+			ps.setAttribute("style", `stop-color:rgba(${mat.color[0]+25},${mat.color[1]+25},${mat.color[2]+25},1)`)
 			p.appendChild(ps)
 			defs.appendChild(p)
 			break;

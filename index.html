@@ -9,10 +9,12 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<!-- scripts! all of the scripts! -->
 		<script src="script/geargenerator.js" defer></script>
+		<script src="script/materialgenerator.js" defer></script>
 		<script src="script/tabmanager.js" defer></script>
 		<script src="data/materials.js" defer></script>
 		<script src="script/script.js" defer></script>
 		<script src="script/machineshop.js" defer></script>
+		<script src="script/craftingroom.js" defer></script>
 	</head>
 	<body>
 		<p>You have <text id="money">$0</text></p>
@@ -51,11 +53,42 @@
 				<button onclick="SwitchTab(1, 0)">Assembly Room</button>
 				<button onclick="SwitchTab(1, 1)">Carpenter's Shop</button>
 			</div>
-			<div id="Tab1_0">
-				Assembly Room
-			</div>
-			<div id="Tab1_1">
-				Carpenter's Shop
+			<div class="flex-grid">
+				<div id="craft-inv" class="column">
+					
+				</div>
+				<div id="Tab1_0" class="column">
+					Assembly Room
+				</div>
+				<div id="Tab1_1" class="column">
+					<div class="flex-grid">
+						<div id="carpenter-stats" class="column">
+							Material: ???
+							<br>
+							<br>
+							Rim Lifespan: ???
+							<br>
+							Rim Speed: ???
+							<br>
+							Core Lifespan: ???
+							<br>
+							Core Effect: ???
+						</div>
+						<div>
+							<button id="carpenter-buy">Buy ($???)</button>
+							<br>
+							<button id="carpenter-gear-rim" disabled>Carve Rim (2 Wood)</button>
+							<br>
+							<button id="carpenter-gear-core" disabled>Carve Core (1 Wood)</button>
+						</div>
+						<div id="carpenter-display" class="column">
+
+						</div>
+					</div>
+					<div id="carpenter-list">
+
+					</div>
+				</div>
 			</div>
 		</div>
 	</body>
