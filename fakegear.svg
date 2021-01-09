@@ -1,0 +1,19 @@
+<svg version="1.1"
+	 baseProfile="full"
+	 width="100" height="100"
+	 xmlns="http://www.w3.org/2000/svg">
+	<g fill="gray" stroke="black" stroke-width="1">
+		<polygon points="45,5 55,5 55,45 95,45 95,55 55,55 55,95 45,95 45,55 5,55 5,45 45,45"/>
+		<polygon points="43,50 15,78 22,85 50,57 78,85 85,78 57,50 85,22 78,15 50,43 22,15 15,22"/>
+		<circle cx="50" cy="50" r="30"/>
+	</g>
+
+	<g fill="gray" stroke="black" stroke-width="1">
+		<circle cx="50" cy="50" r="10"/>
+	</g>
+
+	<g fill="none" stroke="black" stroke-width="1">
+		<circle cx="50" cy="50" r="30"/>
+		<circle cx="50" cy="50" r="10"/>
+	</g>
+</svg>
