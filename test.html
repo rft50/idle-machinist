@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Idle Machnist Test Page</title>
+		<style>
+			.valid {
+				color:green
+			}
+			.invalid {
+				color:red
+			}
+		</style>
+		<script src="script/tabmanager.js" defer></script>
+		<script src="data/materials.js" defer></script>
+	</head>
+	<body>
+		<div>
+			<button id="materialsButton" onclick="SwitchTab(0, 0)">Materials</button>
+		</div>
+		<div id="Tab0_0">
+			<script src="test/materials_verify.js" defer></script>
+			Materials:
+			<br>
+			<div id="materialsList"></div>
+			Effects:
+			<br>
+			<div id="effectsList"></div>
+		</div>
+	</body>
+</html>

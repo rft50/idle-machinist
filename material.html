@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Idle Machinist Materials Page</title>
+		<script src="data/materials.js" defer></script>
+	</head>
+	<body>
+		<div>
+			Wooden Plank (Oak)
+			<br>
+			<svg width="100" height="100">
+				<defs>
+					<linearGradient id="material1">
+						<stop offset="0%" style="stop-color:rgba(185,149,89,1)"/>
+					</linearGradient>
+					<linearGradient id="materialGrain1">
+						<stop offset="0%" style="stop-color:rgba(210,174,114,1)"/>
+					</linearGradient>
+				</defs>
+
+				<filter id="grainBlur">
+					<feGaussianBlur in="SourceGraphic" stdDeviation="0.5"/>
+				</filter>
+
+				<g fill="url(#material1)">
+					<polygon points="10,65 35,75 35,65 10,55"/>
+					<polygon points="35,75 85,55 85,45 35,65"/>
+					<polygon points="10,55 35,65 85,45 60,35"/>
+				</g>
+				<g fill="none" stroke="url(#materialGrain1)" stroke-width="1" filter="url(#grainBlur)">
+					<polyline points="22.5,70 22.5,60 72.5,40"/>
+					<polyline points="16.25,67.5 16.25,57.5 66.25,37.5"/>
+					<polyline points="28.75,72.5 28.75,62.5 78.75,42.5"/>
+				</g>
+				<path fill="none" stroke="black" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" d="M 10 65 L 35 75 L 85 55 M 10 55 L 35 65 L 85 45 L 60 35 Z v 10 M 35 65 v 10 M 85 45 v 10"/>
+			</svg>
+		</div>
+		<div>
+			Ingot (Copper)
+			<br>
+			<svg width="100" height="100">
+				<defs>
+					<linearGradient id="material2">
+						<stop offset="0%" style="stop-color:rgba(255,180,28,1)"/>
+					</linearGradient>
+				</defs>
+
+				<mask id="ingotMask">
+					<rect width="100" height="100"/>
+					<polygon points="10,80 35,90 85,70 78.75,42.5 66.25,37.5 16.25,57.5" fill="white"/>
+				</mask>
+				<filter id="ingotBlur">
+					<feGaussianBlur in="SourceGraphic" stdDeviation="2"/>
+				</filter>
+
+				<g fill="url(#material2)">
+					<polygon points="10,80 35,90 28.75,62.5 16.25,57.5"/>
+					<polygon points="35,90 85,70 78.75,42.5 28.75,62.5"/>
+					<polygon points="16.25,57.5 28.75,62.5 78.75,42.5 66.25,37.5"/>
+				</g>
+				<g fill="none" mask="url(#ingotMask)" filter="url(#ingotBlur)">
+					<polyline points="10,80 16.25,57.5 66.25,37.5" stroke="white" stroke-width="5"/>
+					<polyline points="35,90 85,70" stroke="black" stroke-width="3"/>
+				</g>
+				<path fill="none" stroke="black" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" d="M 10 80 L 35 90 L 85 70 M 16.25 57.5 L 28.75 62.5 L 78.75 42.5 L 66.25 37.5 Z L 10 80 M 28.75 62.5 L 35 90 M 78.75 42.5 L 85 70"/>
+			</svg>
+		</div>
+	</body>
+</html>
