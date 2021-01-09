@@ -50,7 +50,7 @@
 		<div id="Tab0_3">
 			Crafting Room
 			<div>
-				<button onclick="SwitchTab(1, 0)">Assembly Room</button>
+				<button id="assembly-tab-button" onclick="SwitchTab(1, 0)">Assembly Room</button>
 				<button onclick="SwitchTab(1, 1)">Carpenter's Shop</button>
 			</div>
 			<div class="flex-grid">
@@ -58,7 +58,24 @@
 					
 				</div>
 				<div id="Tab1_0" class="column">
-					Assembly Room
+					<div class="flex-grid">
+						<div class="column">
+							<div id="assembly-gear-data">
+								Lifespan: ???
+								<br>
+								Speed: ???
+								<br>
+								Effect: ???
+							</div>
+							<button id="assembly-gear-build">Assemble</button>
+						</div>
+						<div id="assembly-gear-rim" class="column">
+
+						</div>
+						<div id="assembly-gear-core" class="column">
+							
+						</div>
+					</div>
 				</div>
 				<div id="Tab1_1" class="column">
 					<div class="flex-grid">

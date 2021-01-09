@@ -5,7 +5,7 @@ let gearInventory = [
 		primary: materials.Oak,
 		secondary: materials.Oak,
 		rots: 1,
-		effect: "persistent",
+		effect: ["persistent", 1],
 		lifetime: 1200
 	}
 ]

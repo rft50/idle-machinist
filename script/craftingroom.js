@@ -12,6 +12,7 @@
 	]
 
 	let selectedMaterial = null
+	let assembleData = [[]]
 
 	function clearChildren(parent) {
 		while (parent.hasChildNodes()) {
@@ -23,7 +24,7 @@
 		clearChildren(inv)
 	}
 
-	function refreshParts() {
+	function refreshParts(listener) {
 		wipeParts()
 		let id = 1
 		for (let part of partInventory) {
@@ -39,9 +40,37 @@
 					render = GenerateGear(voidMaterial, part.material, id)
 					break;
 			}
+			if (listener != null) {
+				render.addEventListener("click", function(e) {
+					listener(e, part)
+				})
+			}
 			inv.appendChild(render)
 			id++
 		}
+	}
+
+	function setGearAssembleData(rim, core) {
+		assembleData[0] = [rim, core]
+		clearChildren(document.getElementById("assembly-gear-rim"))
+		clearChildren(document.getElementById("assembly-gear-core"))
+		if (rim != null) {
+			let render = GenerateGear(rim, voidMaterial, "ASMGR")
+			document.getElementById("assembly-gear-rim").appendChild(render)
+		}
+		if (core != null) {
+			let render = GenerateGear(voidMaterial, core, "ASMGC")
+			document.getElementById("assembly-gear-core").appendChild(render)
+		}
+		let lifetime = (rim != null ? rim.gear.duration : 0) + (core != null ? core.gear.coreBonus : 0)
+		let allData = rim != null && core != null
+		let strData = [ // I'm sure this can be made better
+			`Lifespan: ${lifetime + (allData ? "" : "?")}`,
+			`Speed: ${rim != null ? rim.gear.speed : "???"}`,
+			`Effect: ${core != null ? (core.gear.effect.join(" ")) : "???"}`
+		]
+		document.getElementById("assembly-gear-data").innerHTML = strData.join("<br>")
+		document.getElementById("assembly-gear-build").disabled = !allData
 	}
 
 	// Finds all items in the part inventory that match the definition,
@@ -145,12 +174,33 @@
 		})
 	}
 
-	AddTabOpenedListener(refreshParts, 0, 3)
+	AddTabOpenedListener(function() {
+		document.getElementById("assembly-tab-button").click()
+	}, 0, 3)
 	AddTabClosedListener(wipeParts, 0, 3)
+
+	// Assembly Room Listeners
+	AddTabOpenedListener(function() {
+		setGearAssembleData(null, null)
+		refreshParts(function(e, part) {
+			switch (part.type) {
+				case "gear-rim":
+					setGearAssembleData(part.material, assembleData[0][1])
+					break
+				case "gear-core":
+					setGearAssembleData(assembleData[0][0], part.material)
+					break
+			}
+		})
+	}, 1, 0)
+	AddTabClosedListener(function() {
+		setGearAssembleData(null, null)
+	}, 1, 0)
 
 	// Carpenter's Shop Listeners
 	AddTabOpenedListener(function() {
 		displayMaterial(materials.Oak, carpenterDisplay, carpenterStats, carpenterButtons)
+		refreshParts()
 	}, 1, 1)
 	AddTabClosedListener(function() {
 		clearChildren(carpenterDisplay)
@@ -171,4 +221,30 @@
 	}
 
 	setupButtons("wood", carpenterButtons, [carpenterDisplay, carpenterStats])
+
+	document.getElementById("assembly-gear-build").addEventListener("click", function() {
+		let rim = assembleData[0][0]
+		let core = assembleData[0][1]
+		if (rim != null && core != null) {
+			let rimPart = findMaterials({
+				type: "gear-rim",
+				material: rim
+			}, 1)[0]
+			let corePart = findMaterials({
+				type: "gear-core",
+				material: core
+			}, 1)[0]
+			if (rimPart != null && corePart != null) {
+				removeMaterials([rimPart, corePart])
+				gearInventory.push({
+					primary: rim,
+					secondary: core,
+					rots: rim.gear.speed,
+					effect: core.gear.effect,
+					lifetime: rim.gear.duration + core.gear.coreBonus
+				})
+				document.getElementById("assembly-tab-button").click()
+			}
+		}
+	})
 }
