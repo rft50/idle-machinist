@@ -45,6 +45,15 @@
 		recalculate()
 	}
 
+	let unequipGearGenerator = function(id) {
+		return function() {
+			let gear = activeGearbox.gears.splice(id, 1)[0];
+			gearInventory.push(gear);
+			refreshGears();
+			recalculate();
+		}
+	}
+
 	let wipeGears = function() {
 		while (inv.hasChildNodes()) {
 			inv.removeChild(inv.childNodes[0]);
@@ -70,6 +79,7 @@
 			let render
 			if (activeGearbox.gears[i] != null) {
 				render = GenerateGear(activeGearbox.gears[i].primary, activeGearbox.gears[i].secondary, id)
+				render.addEventListener("click", unequipGearGenerator(i));
 				id++
 			} else {
 				render = document.createElement("img")
