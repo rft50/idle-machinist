@@ -23,6 +23,10 @@
 		return 1 + markup * 0.25
 	}
 
+	let gearCap = function() {
+		return activeGearbox.baseMax + activeGearbox.upgrades.carve
+	}
+
 	let recalculateGlobal = function() {
 		let rots = 0
 		// replace this with a loop iterating over all gearboxes at some point
@@ -46,7 +50,11 @@
 		rotDisplay.textContent = `This gearbox is producing ${trim(rots)} rot/s, worth $${trim(rots*markupVal())} total`
 		lubeDisplay.textContent = `This gearbox has been lubricated ${activeGearbox.upgrades.lubricate} times, so its production is multiplied by ${trim(lubeMul)}`
 		lubeButton.textContent = `Lubricate ($${trim(100*Math.pow(1.5, activeGearbox.upgrades.lubricate))}, 1.1x)`
+		carveDisplay.textContent = `This gearbox has been carved ${activeGearbox.upgrades.carve} times, so it can hold ${activeGearbox.baseMax+activeGearbox.upgrades.carve} gears`
+		carveButton.textContent = `Carve ($${trim(1000*Math.pow(5, activeGearbox.upgrades.carve))}, +1 gear)`
 		
+		carveButton.disabled = activeGearbox.baseMax * 2 == gearCap()
+
 		recalculateGlobal()
 	}
 
@@ -85,7 +93,7 @@
 	let refreshGears = function() {
 		wipeGears()
 		let id = 1;
-		let addEquip = activeGearbox.gears.length < activeGearbox.baseMax
+		let addEquip = activeGearbox.gears.length < gearCap()
 		for (let gear of gearInventory) {
 			let render = GenerateGear(gear.primary, gear.secondary, id)
 			if (addEquip) {
@@ -94,7 +102,7 @@
 			inv.appendChild(render)
 			id++
 		}
-		for (let i = 0; i < activeGearbox.baseMax; i++) {
+		for (let i = 0; i < gearCap(); i++) {
 			let render
 			if (activeGearbox.gears[i] != null) {
 				render = GenerateGear(activeGearbox.gears[i].primary, activeGearbox.gears[i].secondary, id)
@@ -122,6 +130,18 @@
 		if (TrySpendMoney(cost)) {
 			activeGearbox.upgrades.lubricate++
 			recalculate()
+		}
+	})
+
+	carveButton.addEventListener("click", function() {
+		let cost = Math.pow(5, activeGearbox.upgrades.carve) * 1000
+		let gearCount = gearCap()
+		let limit = activeGearbox.baseMax * 2
+		if (gearCount < limit && TrySpendMoney(cost))
+		{
+			activeGearbox.upgrades.carve++
+			recalculate()
+			refreshGears()
 		}
 	})
 
