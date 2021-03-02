@@ -30,7 +30,9 @@ let activeGearbox = {
 	rots: 0,
 	nextUpdate: Infinity
 }
+let markup = 0
 
+// gameplay
 let moneyDisplay = document.getElementById("money")
 
 function GainMoney(qnt) {

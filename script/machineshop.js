@@ -5,6 +5,10 @@
 	let content = document.getElementById("machine-content")
 	let upgrades = document.getElementById("machine-upgrades")
 
+	let globRotDisplay = document.getElementById("machine-global-rots")
+	let globMarkupDisplay = document.getElementById("machine-global-markup")
+	let globMarkupButton = document.getElementById("machine-global-markup-button")
+
 	let rotDisplay = document.getElementById("machine-rots")
 	let lubeDisplay = document.getElementById("machine-lubricate")
 	let lubeButton = document.getElementById("machine-lubricate-button")
@@ -13,6 +17,20 @@
 
 	let trim = function(num) {
 		return Number.parseFloat(num).toFixed(2)
+	}
+
+	let markupVal = function() {
+		return 1 + markup * 0.25
+	}
+
+	let recalculateGlobal = function() {
+		let rots = 0
+		// replace this with a loop iterating over all gearboxes at some point
+		rots = activeGearbox.rots
+
+		globRotDisplay.textContent = `You are producing a total of $${trim(rots)} rot/s, worth $${trim(rots*markupVal())} total`
+		globMarkupDisplay.textContent = `You have marked up the value of rots ${markup} times, so they are worth $${markupVal()} each`
+		globMarkupButton.textContent = `Markup ($${trim(1000*Math.pow(10, markup))}, +0.25 $/rot)`
 	}
 
 	let recalculate = function() {
@@ -25,10 +43,11 @@
 		rots *= lubeMul
 
 		activeGearbox.rots = rots
-		rotDisplay.textContent = `This gearbox is producing ${trim(rots)} rot/s, worth $${trim(rots)} total`
+		rotDisplay.textContent = `This gearbox is producing ${trim(rots)} rot/s, worth $${trim(rots*markupVal())} total`
 		lubeDisplay.textContent = `This gearbox has been lubricated ${activeGearbox.upgrades.lubricate} times, so its production is multiplied by ${trim(lubeMul)}`
 		lubeButton.textContent = `Lubricate ($${trim(100*Math.pow(1.5, activeGearbox.upgrades.lubricate))}, 1.1x)`
 		
+		recalculateGlobal()
 	}
 
 	let equipGear = function(event) {
@@ -88,6 +107,15 @@
 			content.appendChild(render)
 		}
 	}
+
+	// button code
+	globMarkupButton.addEventListener("click", function() {
+		let cost = Math.pow(10, markup) * 1000
+		if (TrySpendMoney(cost)) {
+			markup++
+			recalculate()
+		}
+	})
 
 	lubeButton.addEventListener("click", function() {
 		let cost = Math.pow(1.5, activeGearbox.upgrades.lubricate) * 100
