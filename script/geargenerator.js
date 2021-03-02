@@ -144,6 +144,51 @@ function GenerateGear(prim, sec, id) {
 			break;
 	}
 
+	// filters and masks
+	if (prim.material == "wood" || sec.material == "wood")
+	{
+		g1 = document.createElementNS("http://www.w3.org/2000/svg", "filter")
+		g1.id = "grainBlur"
+		g2 = document.createElementNS("http://www.w3.org/2000/svg", "feGaussianBlur")
+		g2.setAttribute("in", "SourceGraphic")
+		g2.setAttribute("stdDeviation", "0.5")
+		g1.appendChild(g2)
+		svg.appendChild(g1)
+	}
+	if (prim.material == "crystal")
+	{
+		g1 = document.createElementNS("http://www.w3.org/2000/svg", "mask")
+		g1.id = "circleMask"
+		g2 = document.createElementNS("http://www.w3.org/2000/svg", "rect")
+		g2.setAttribute("width", "100")
+		g2.setAttribute("height", "100")
+		g1.appendChild(g2)
+		g2 = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+		g2.setAttribute("cx", "50")
+		g2.setAttribute("cy", "50")
+		g2.setAttribute("r", "30")
+		g2.setAttribute("fill", "white")
+		g1.appendChild(g2)
+		svg.appendChild(g1)
+	}
+	if (sec.material == "crystal")
+	{
+		g1 = document.createElementNS("http://www.w3.org/2000/svg", "mask")
+		g1.id = "smallMask"
+		g2 = document.createElementNS("http://www.w3.org/2000/svg", "rect")
+		g2.setAttribute("width", "100")
+		g2.setAttribute("height", "100")
+		g1.appendChild(g2)
+		g2 = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+		g2.setAttribute("cx", "50")
+		g2.setAttribute("cy", "50")
+		g2.setAttribute("r", "10")
+		g2.setAttribute("fill", "white")
+		g1.appendChild(g2)
+		svg.appendChild(g1)
+	}
+
+
 	// shape definitions
 	switch (prim.material) {
 		case "wood":
