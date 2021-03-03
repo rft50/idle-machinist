@@ -13,6 +13,7 @@
 
 	let selectedMaterial = null
 	let selectedGear = null
+	let scrapData = []
 	let assembleData = [[]]
 
 	function clearChildren(parent) {
@@ -108,6 +109,46 @@
 		document.getElementById("polish-data").innerHTML = strData.join("<br>")
 		document.getElementById("polish-button").textContent = `Polish ($${100*Math.pow(5, polish)})`
 		document.getElementById("polish-button").disabled = polish >= 5
+	}
+
+	function setScrapData(gear) {
+		selectedGear = gear
+		clearChildren(document.getElementById("scrap-display"))
+		clearChildren(document.getElementById("scrap-loot-display"))
+		if (gear == null) {
+			document.getElementById("polish-button").disabled = true
+			scrapData = null
+			return
+		}
+		let broken = gear.lifetime == 0
+		let loot = []
+		let probs = [
+			broken ? 0.6 : 0.75, // high
+			broken ? 0.4 : 0.5, // mid
+			broken ? 0.2 : 0.25, // low
+		]
+		switch (gear.primary.material) {
+			case "wood":
+				loot.push([gear.primary, probs[0]])
+				loot.push([gear.primary, probs[2]])
+				break
+		}
+		switch (gear.secondary.material) {
+			case "wood":
+				loot.push([gear.secondary, probs[1]])
+				break
+		}
+		scrapData = loot
+		document.getElementById("scrap-display").appendChild(RenderGear(gear))
+		for (var i = 0; i < loot.length; i++) {
+			var lt = loot[i]
+			var div = document.createElement("div")
+			div.appendChild(GenerateMaterial(lt[0], "L" + i))
+			var p = document.createElement("p")
+			p.textContent = `${Math.floor(lt[1]*100)}%`
+			div.appendChild(p)
+			document.getElementById("scrap-loot-display").appendChild(div)
+		}
 	}
 
 	// Finds all items in the part inventory that match the definition,
@@ -245,14 +286,25 @@
 		setPolishData(null)
 	}, 1, 1)
 
+	// Scrap Heap Listeners
+	AddTabOpenedListener(function() {
+		refreshPartsAsGears(function(e, gear) {
+			setScrapData(gear)
+		})
+		setScrapData(null)
+	}, 1, 2)
+	AddTabClosedListener(function() {
+		setScrapData(null)
+	}, 1, 2)
+
 	// Carpenter's Shop Listeners
 	AddTabOpenedListener(function() {
 		displayMaterial(materials.Oak, carpenterDisplay, carpenterStats, carpenterButtons)
 		refreshParts()
-	}, 1, 2)
+	}, 1, 3)
 	AddTabClosedListener(function() {
 		clearChildren(carpenterDisplay)
-	}, 1, 2)
+	}, 1, 3)
 
 	// list setups
 	for (let mat of Object.values(materials)) {
@@ -308,6 +360,27 @@
 				refreshPartsAsGears(function(e, gear) {
 					setPolishData(gear)
 				})
+			}
+		}
+	})
+
+	document.getElementById("scrap-button").addEventListener("click", function() {
+		if (selectedGear != null && scrapData.length != 0) {
+			let idx = gearInventory.indexOf(selectedGear)
+			if (idx != -1) {
+				gearInventory.splice(idx, 1)
+				for (var loot of scrapData) {
+					if (Math.random() < loot[1]) {
+						partInventory.push({
+							type: "raw",
+							material: loot[0]
+						})
+					}
+				}
+				refreshPartsAsGears(function(e, gear) {
+					setScrapData(gear)
+				})
+				setScrapData(null)
 			}
 		}
 	})

@@ -59,7 +59,8 @@
 			<div>
 				<button id="assembly-tab-button" onclick="SwitchTab(1, 0)">Assembly Room</button>
 				<button onclick="SwitchTab(1, 1)">Polishing Shop</button>
-				<button onclick="SwitchTab(1, 2)">Carpenter's Shop</button>
+				<button onclick="SwitchTab(1, 2)">Scrap Heap</button>
+				<button onclick="SwitchTab(1, 3)">Carpenter's Shop</button>
 			</div>
 			<div class="flex-grid">
 				<div id="craft-inv" class="column">
@@ -103,6 +104,19 @@
 					</div>
 				</div>
 				<div id="Tab1_2" class="column">
+					<div class="flex-grid">
+						<div class="column">
+							<div id="scrap-display">
+
+							</div>
+							<button id="scrap-button">Scrap</button>
+						</div>
+						<div id="scrap-loot-display" class="column">
+
+						</div>
+					</div>
+				</div>
+				<div id="Tab1_3" class="column">
 					<div class="flex-grid">
 						<div id="carpenter-stats" class="column">
 							Material: ???
