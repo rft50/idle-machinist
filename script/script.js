@@ -58,5 +58,6 @@ function TrySpendMoney(qnt, func) {
 
 window.setInterval(function() {
 	var rots = activeGearbox.rots
-	GainMoney(rots)
+	var cashMul = 1 + markup / 4
+	GainMoney(rots * cashMul)
 }, 1000)
