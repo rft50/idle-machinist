@@ -6,7 +6,7 @@ let gearInventory = [
 		secondary: materials.Oak,
 		rots: 1,
 		effect: ["persistent", 1],
-		lifetime: 1200
+		lifetime: 0
 	}
 ]
 let partInventory = [
@@ -60,4 +60,7 @@ window.setInterval(function() {
 	var rots = activeGearbox.rots
 	var cashMul = 1 + markup / 4
 	GainMoney(rots * cashMul)
+	if (Date.now()/1000 >= activeGearbox.nextUpdate) {
+		RecalculateGears()
+	}
 }, 1000)

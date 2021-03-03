@@ -1,10 +1,12 @@
 "use strict"
 
-// if generated gears look off, the "grainBlur", "circleMask", and "smallMask"
-// are not included in the generated copies
+// takes a gear, removes the hassle of parsing it for details
+function RenderGear(gear, id) {
+	return GenerateGear(gear.primary, gear.secondary, id, gear.polish, gear.lifetime == 0)
+}
 
 // this function takes the material datas, not the material names
-function GenerateGear(prim, sec, id, polish) {
+function GenerateGear(prim, sec, id, polish, broken) {
 	let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
 	svg.setAttribute("width", "100")
 	svg.setAttribute("height", "100")
@@ -398,6 +400,15 @@ function GenerateGear(prim, sec, id, polish) {
 			g.appendChild(temp)
 		}
 		svg.appendChild(g)
+	}
+
+	if (broken) {
+		temp = document.createElementNS("http://www.w3.org/2000/svg", "polygon")
+		temp.setAttribute("points", "58,21 52,35 61,38 64,48 67,36 59,32 62,22")
+		svg.appendChild(temp)
+		temp = document.createElementNS("http://www.w3.org/2000/svg", "polygon")
+		temp.setAttribute("points", "21,58 27,53 33,54 38,57 29,57 23,63")
+		svg.appendChild(temp)
 	}
 
 	return svg

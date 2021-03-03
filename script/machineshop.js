@@ -1,5 +1,6 @@
 "use strict"
 
+let RecalculateGears
 {
 	let inv = document.getElementById("machine-inv")
 	let content = document.getElementById("machine-content")
@@ -27,6 +28,10 @@
 		return activeGearbox.baseMax + activeGearbox.upgrades.carve
 	}
 
+	let now = function() {
+		return Math.floor(Date.now()/1000)
+	}
+
 	let recalculateGlobal = function() {
 		let rots = 0
 		// replace this with a loop iterating over all gearboxes at some point
@@ -39,14 +44,24 @@
 
 	let recalculate = function() {
 		let rots = 0
+		let nw = now()
+		let nextUpdate = Infinity
 		for (let gear of activeGearbox.gears) {
-			rots += gear.rots
+			gear.lifetime = Math.max(gear.placed + gear.lifetime - nw, 0)
+			gear.placed = nw
+			if (gear.lifetime > 0) {
+				rots += gear.rots
+				if (gear.lifetime + nw < nextUpdate) {
+					nextUpdate = gear.lifetime + nw
+				}
+			}
 		}
 
 		let lubeMul = Math.pow(1.1, activeGearbox.upgrades.lubricate)
 		rots *= lubeMul
 
 		activeGearbox.rots = rots
+		activeGearbox.nextUpdate = nextUpdate
 		rotDisplay.textContent = `This gearbox is producing ${trim(rots)} rot/s, worth $${trim(rots*markupVal())} total`
 		lubeDisplay.textContent = `This gearbox has been lubricated ${activeGearbox.upgrades.lubricate} times, so its production is multiplied by ${trim(lubeMul)}`
 		lubeButton.textContent = `Lubricate ($${trim(100*Math.pow(1.5, activeGearbox.upgrades.lubricate))}, 1.1x)`
@@ -67,6 +82,7 @@
 			}
 		}
 		let gear = gearInventory.splice(idx, 1)[0]
+		gear.placed = now()
 		activeGearbox.gears.push(gear)
 		refreshGears()
 		recalculate()
@@ -75,6 +91,8 @@
 	let unequipGearGenerator = function(id) {
 		return function() {
 			let gear = activeGearbox.gears.splice(id, 1)[0];
+			gear.lifetime = Math.max(gear.placed + gear.lifetime - now(), 0)
+			delete gear.placed
 			gearInventory.push(gear);
 			refreshGears();
 			recalculate();
@@ -95,7 +113,7 @@
 		let id = 1;
 		let addEquip = activeGearbox.gears.length < gearCap()
 		for (let gear of gearInventory) {
-			let render = GenerateGear(gear.primary, gear.secondary, id, gear.polish)
+			let render = RenderGear(gear, id)
 			if (addEquip) {
 				render.addEventListener("click", equipGear)
 			}
@@ -105,7 +123,7 @@
 		for (let i = 0; i < gearCap(); i++) {
 			let render
 			if (activeGearbox.gears[i] != null) {
-				render = GenerateGear(activeGearbox.gears[i].primary, activeGearbox.gears[i].secondary, id, activeGearbox.gears[i].polish)
+				render = RenderGear(activeGearbox.gears[i], id)
 				render.addEventListener("click", unequipGearGenerator(i));
 				id++
 			} else {
@@ -147,4 +165,11 @@
 
 	AddTabOpenedListener(refreshGears, 0, 2)
 	AddTabClosedListener(wipeGears, 0, 2)
+
+	RecalculateGears = function() {
+		recalculate()
+		if (activeTab[0] == 2) {
+			refreshGears()
+		}
+	}
 }

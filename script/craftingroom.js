@@ -55,7 +55,7 @@
 		wipeParts()
 		let id = 1
 		for (let gear of gearInventory) {
-			let render = GenerateGear(gear.primary, gear.secondary, id, gear.polish)
+			let render = RenderGear(gear, id)
 			if (listener != null) {
 				render.addEventListener("click", function(e) {
 					listener(e, gear)
@@ -98,7 +98,7 @@
 			return
 		}
 		let polish = gear.polish || 0
-		let render = GenerateGear(gear.primary, gear.secondary, "POLISH", polish)
+		let render = RenderGear(gear, "POLISH")
 		document.getElementById("polish-display").appendChild(render)
 		let strData = [
 			`Base Speed: ${gear.primary.gear.speed}`,
