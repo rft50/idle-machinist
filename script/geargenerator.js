@@ -4,7 +4,7 @@
 // are not included in the generated copies
 
 // this function takes the material datas, not the material names
-function GenerateGear(prim, sec, id) {
+function GenerateGear(prim, sec, id, polish) {
 	let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
 	svg.setAttribute("width", "100")
 	svg.setAttribute("height", "100")
@@ -13,6 +13,7 @@ function GenerateGear(prim, sec, id) {
 	let p, ps, g1, g2, temp
 	let ap = prim.color.length == 4 ? prim.color[3] : 1
 	let as = sec.color.length == 4 ? sec.color[3] : 1
+	polish |= 0 // set polish to 0 if it's null/undefined
 
 	// color definitions
 	let defs = document.createElementNS("http://www.w3.org/2000/svg", "defs")
@@ -145,8 +146,7 @@ function GenerateGear(prim, sec, id) {
 	}
 
 	// filters and masks
-	if (prim.material == "wood" || sec.material == "wood")
-	{
+	if (prim.material == "wood" || sec.material == "wood") {
 		g1 = document.createElementNS("http://www.w3.org/2000/svg", "filter")
 		g1.id = "grainBlur"
 		g2 = document.createElementNS("http://www.w3.org/2000/svg", "feGaussianBlur")
@@ -155,8 +155,7 @@ function GenerateGear(prim, sec, id) {
 		g1.appendChild(g2)
 		svg.appendChild(g1)
 	}
-	if (prim.material == "crystal")
-	{
+	if (prim.material == "crystal") {
 		g1 = document.createElementNS("http://www.w3.org/2000/svg", "mask")
 		g1.id = "circleMask"
 		g2 = document.createElementNS("http://www.w3.org/2000/svg", "rect")
@@ -171,8 +170,7 @@ function GenerateGear(prim, sec, id) {
 		g1.appendChild(g2)
 		svg.appendChild(g1)
 	}
-	if (sec.material == "crystal")
-	{
+	if (sec.material == "crystal") {
 		g1 = document.createElementNS("http://www.w3.org/2000/svg", "mask")
 		g1.id = "smallMask"
 		g2 = document.createElementNS("http://www.w3.org/2000/svg", "rect")
@@ -184,6 +182,14 @@ function GenerateGear(prim, sec, id) {
 		g2.setAttribute("cy", "50")
 		g2.setAttribute("r", "10")
 		g2.setAttribute("fill", "white")
+		g1.appendChild(g2)
+		svg.appendChild(g1)
+	}
+	if (polish != 0) {
+		g1 = document.createElementNS("http://www.w3.org/2000/svg", "filter")
+		g1.id = "polish" + id
+		g2 = document.createElementNS("http://www.w3.org/2000/svg", "feGaussianBlur")
+		g2.setAttribute("stdDeviation", "18")
 		g1.appendChild(g2)
 		svg.appendChild(g1)
 	}
@@ -353,6 +359,25 @@ function GenerateGear(prim, sec, id) {
 	}
 
 	// finalization
+	if (polish != 0) {
+		let g = document.createElementNS("http://www.w3.org/2000/svg", "g")
+		g.setAttribute("filter", `url(#polish${id})`)
+		temp = document.createElementNS("http://www.w3.org/2000/svg", "rect")
+		temp.setAttribute("x", "0")
+		temp.setAttribute("y", "0")
+		temp.setAttribute("width", "100")
+		temp.setAttribute("height", "100")
+		temp.setAttribute("fill", "rgba(0,0,0,0)")
+		g.appendChild(temp)
+		temp = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+		temp.setAttribute("cx", "45")
+		temp.setAttribute("cy", "45")
+		temp.setAttribute("r", "30")
+		temp.setAttribute("fill", `rgba(255,255,255,${0.2 + polish * 0.05})`)
+		g.appendChild(temp)
+		svg.append(g)
+	}
+
 	if (ap != 0 || as != 0) {
 		let g = document.createElementNS("http://www.w3.org/2000/svg", "g")
 		g.setAttribute("fill", "none")

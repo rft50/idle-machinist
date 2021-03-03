@@ -95,7 +95,7 @@
 		let id = 1;
 		let addEquip = activeGearbox.gears.length < gearCap()
 		for (let gear of gearInventory) {
-			let render = GenerateGear(gear.primary, gear.secondary, id)
+			let render = GenerateGear(gear.primary, gear.secondary, id, gear.polish)
 			if (addEquip) {
 				render.addEventListener("click", equipGear)
 			}
@@ -105,7 +105,7 @@
 		for (let i = 0; i < gearCap(); i++) {
 			let render
 			if (activeGearbox.gears[i] != null) {
-				render = GenerateGear(activeGearbox.gears[i].primary, activeGearbox.gears[i].secondary, id)
+				render = GenerateGear(activeGearbox.gears[i].primary, activeGearbox.gears[i].secondary, id, activeGearbox.gears[i].polish)
 				render.addEventListener("click", unequipGearGenerator(i));
 				id++
 			} else {

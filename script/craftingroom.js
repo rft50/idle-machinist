@@ -12,6 +12,7 @@
 	]
 
 	let selectedMaterial = null
+	let selectedGear = null
 	let assembleData = [[]]
 
 	function clearChildren(parent) {
@@ -50,6 +51,21 @@
 		}
 	}
 
+	function refreshPartsAsGears(listener) {
+		wipeParts()
+		let id = 1
+		for (let gear of gearInventory) {
+			let render = GenerateGear(gear.primary, gear.secondary, id, gear.polish)
+			if (listener != null) {
+				render.addEventListener("click", function(e) {
+					listener(e, gear)
+				})
+			}
+			inv.appendChild(render)
+			id++
+		}
+	}
+
 	function setGearAssembleData(rim, core) {
 		assembleData[0] = [rim, core]
 		clearChildren(document.getElementById("assembly-gear-rim"))
@@ -71,6 +87,27 @@
 		]
 		document.getElementById("assembly-gear-data").innerHTML = strData.join("<br>")
 		document.getElementById("assembly-gear-build").disabled = !allData
+	}
+
+	function setPolishData(gear) {
+		selectedGear = gear
+		clearChildren(document.getElementById("polish-display"))
+		if (gear == null) {
+			document.getElementById("polish-button").textContent = `Polish ($100)`
+			document.getElementById("polish-button").disabled = true
+			return
+		}
+		let polish = gear.polish || 0
+		let render = GenerateGear(gear.primary, gear.secondary, "POLISH", polish)
+		document.getElementById("polish-display").appendChild(render)
+		let strData = [
+			`Base Speed: ${gear.primary.gear.speed}`,
+			`Polish Count: ${polish}`,
+			`Adjusted Speed: ${gear.primary.gear.speed*Math.pow(2, polish)}`
+		]
+		document.getElementById("polish-data").innerHTML = strData.join("<br>")
+		document.getElementById("polish-button").textContent = `Polish ($${100*Math.pow(5, polish)})`
+		document.getElementById("polish-button").disabled = polish >= 5
 	}
 
 	// Finds all items in the part inventory that match the definition,
@@ -197,14 +234,25 @@
 		setGearAssembleData(null, null)
 	}, 1, 0)
 
+	// Polish Shop Listeners
+	AddTabOpenedListener(function() {
+		refreshPartsAsGears(function(e, gear) {
+			setPolishData(gear)
+		})
+		setPolishData(null)
+	}, 1, 1)
+	AddTabClosedListener(function() {
+		setPolishData(null)
+	}, 1, 1)
+
 	// Carpenter's Shop Listeners
 	AddTabOpenedListener(function() {
 		displayMaterial(materials.Oak, carpenterDisplay, carpenterStats, carpenterButtons)
 		refreshParts()
-	}, 1, 1)
+	}, 1, 2)
 	AddTabClosedListener(function() {
 		clearChildren(carpenterDisplay)
-	}, 1, 1)
+	}, 1, 2)
 
 	// list setups
 	for (let mat of Object.values(materials)) {
@@ -244,6 +292,22 @@
 					lifetime: rim.gear.duration + core.gear.coreBonus
 				})
 				document.getElementById("assembly-tab-button").click()
+			}
+		}
+	})
+
+	document.getElementById("polish-button").addEventListener("click", function() {
+		if (selectedGear != null) {
+			let polish = selectedGear.polish || 0
+			let cost = 100 * Math.pow(5, polish)
+			if (TrySpendMoney(cost)) {
+				polish++
+				selectedGear.polish = polish
+				selectedGear.rots = selectedGear.primary.gear.speed * Math.pow(2, polish)
+				setPolishData(selectedGear)
+				refreshPartsAsGears(function(e, gear) {
+					setPolishData(gear)
+				})
 			}
 		}
 	})
