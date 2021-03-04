@@ -37,6 +37,28 @@ var materials = {
 			coreBonus: 150,
 			effect: ["persistent", 1]
 		}
+	},
+	Ash: {
+		material: "wood",
+		cost: 5000,
+		color: [223, 170, 95],
+		gear: {
+			duration: 7200,
+			speed: 2,
+			coreBonus: 0,
+			effect: ["persistent", 1]
+		}
+	},
+	Cedar: {
+		material: "wood",
+		cost: 20000,
+		color: [208, 133, 121],
+		gear: {
+			duration: 600,
+			speed: 10,
+			coreBonus: -300,
+			effect: ["persistent", 2]
+		}
 	}
 }
 

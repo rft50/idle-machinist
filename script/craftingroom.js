@@ -12,6 +12,8 @@
 	]
 
 	let selectedMaterial = null
+	let selectedGear = null
+	let scrapData = []
 	let assembleData = [[]]
 
 	function clearChildren(parent) {
@@ -50,6 +52,21 @@
 		}
 	}
 
+	function refreshPartsAsGears(listener) {
+		wipeParts()
+		let id = 1
+		for (let gear of gearInventory) {
+			let render = RenderGear(gear, id)
+			if (listener != null) {
+				render.addEventListener("click", function(e) {
+					listener(e, gear)
+				})
+			}
+			inv.appendChild(render)
+			id++
+		}
+	}
+
 	function setGearAssembleData(rim, core) {
 		assembleData[0] = [rim, core]
 		clearChildren(document.getElementById("assembly-gear-rim"))
@@ -71,6 +88,67 @@
 		]
 		document.getElementById("assembly-gear-data").innerHTML = strData.join("<br>")
 		document.getElementById("assembly-gear-build").disabled = !allData
+	}
+
+	function setPolishData(gear) {
+		selectedGear = gear
+		clearChildren(document.getElementById("polish-display"))
+		if (gear == null) {
+			document.getElementById("polish-button").textContent = `Polish ($100)`
+			document.getElementById("polish-button").disabled = true
+			return
+		}
+		let polish = gear.polish || 0
+		let render = RenderGear(gear, "POLISH")
+		document.getElementById("polish-display").appendChild(render)
+		let strData = [
+			`Base Speed: ${gear.primary.gear.speed}`,
+			`Polish Count: ${polish}`,
+			`Adjusted Speed: ${gear.primary.gear.speed*Math.pow(2, polish)}`
+		]
+		document.getElementById("polish-data").innerHTML = strData.join("<br>")
+		document.getElementById("polish-button").textContent = `Polish ($${100*Math.pow(5, polish)})`
+		document.getElementById("polish-button").disabled = polish >= 5
+	}
+
+	function setScrapData(gear) {
+		selectedGear = gear
+		clearChildren(document.getElementById("scrap-display"))
+		clearChildren(document.getElementById("scrap-loot-display"))
+		if (gear == null) {
+			document.getElementById("polish-button").disabled = true
+			scrapData = null
+			return
+		}
+		let broken = gear.lifetime == 0
+		let loot = []
+		let probs = [
+			broken ? 0.6 : 0.75, // high
+			broken ? 0.4 : 0.5, // mid
+			broken ? 0.2 : 0.25, // low
+		]
+		switch (gear.primary.material) {
+			case "wood":
+				loot.push([gear.primary, probs[0]])
+				loot.push([gear.primary, probs[2]])
+				break
+		}
+		switch (gear.secondary.material) {
+			case "wood":
+				loot.push([gear.secondary, probs[1]])
+				break
+		}
+		scrapData = loot
+		document.getElementById("scrap-display").appendChild(RenderGear(gear))
+		for (var i = 0; i < loot.length; i++) {
+			var lt = loot[i]
+			var div = document.createElement("div")
+			div.appendChild(GenerateMaterial(lt[0], "L" + i))
+			var p = document.createElement("p")
+			p.textContent = `${Math.floor(lt[1]*100)}%`
+			div.appendChild(p)
+			document.getElementById("scrap-loot-display").appendChild(div)
+		}
 	}
 
 	// Finds all items in the part inventory that match the definition,
@@ -197,14 +275,36 @@
 		setGearAssembleData(null, null)
 	}, 1, 0)
 
+	// Polish Shop Listeners
+	AddTabOpenedListener(function() {
+		refreshPartsAsGears(function(e, gear) {
+			setPolishData(gear)
+		})
+		setPolishData(null)
+	}, 1, 1)
+	AddTabClosedListener(function() {
+		setPolishData(null)
+	}, 1, 1)
+
+	// Scrap Heap Listeners
+	AddTabOpenedListener(function() {
+		refreshPartsAsGears(function(e, gear) {
+			setScrapData(gear)
+		})
+		setScrapData(null)
+	}, 1, 2)
+	AddTabClosedListener(function() {
+		setScrapData(null)
+	}, 1, 2)
+
 	// Carpenter's Shop Listeners
 	AddTabOpenedListener(function() {
 		displayMaterial(materials.Oak, carpenterDisplay, carpenterStats, carpenterButtons)
 		refreshParts()
-	}, 1, 1)
+	}, 1, 3)
 	AddTabClosedListener(function() {
 		clearChildren(carpenterDisplay)
-	}, 1, 1)
+	}, 1, 3)
 
 	// list setups
 	for (let mat of Object.values(materials)) {
@@ -244,6 +344,43 @@
 					lifetime: rim.gear.duration + core.gear.coreBonus
 				})
 				document.getElementById("assembly-tab-button").click()
+			}
+		}
+	})
+
+	document.getElementById("polish-button").addEventListener("click", function() {
+		if (selectedGear != null) {
+			let polish = selectedGear.polish || 0
+			let cost = 100 * Math.pow(5, polish)
+			if (TrySpendMoney(cost)) {
+				polish++
+				selectedGear.polish = polish
+				selectedGear.rots = selectedGear.primary.gear.speed * Math.pow(2, polish)
+				setPolishData(selectedGear)
+				refreshPartsAsGears(function(e, gear) {
+					setPolishData(gear)
+				})
+			}
+		}
+	})
+
+	document.getElementById("scrap-button").addEventListener("click", function() {
+		if (selectedGear != null && scrapData.length != 0) {
+			let idx = gearInventory.indexOf(selectedGear)
+			if (idx != -1) {
+				gearInventory.splice(idx, 1)
+				for (var loot of scrapData) {
+					if (Math.random() < loot[1]) {
+						partInventory.push({
+							type: "raw",
+							material: loot[0]
+						})
+					}
+				}
+				refreshPartsAsGears(function(e, gear) {
+					setScrapData(gear)
+				})
+				setScrapData(null)
 			}
 		}
 	})
