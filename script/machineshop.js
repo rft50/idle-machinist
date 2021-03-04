@@ -55,6 +55,11 @@ let RecalculateGears
 					nextUpdate = gear.lifetime + nw
 				}
 			}
+			else {
+				if (gear.effect[0] == "persistent") {
+					rots += gear.rots * gear.effect[1]/10
+				}
+			}
 		}
 
 		let lubeMul = Math.pow(1.1, activeGearbox.upgrades.lubricate)
