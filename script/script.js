@@ -30,7 +30,9 @@ let activeGearbox = {
 	rots: 0,
 	nextUpdate: Infinity
 }
+let markup = 0
 
+// gameplay
 let moneyDisplay = document.getElementById("money")
 
 function GainMoney(qnt) {
@@ -56,5 +58,9 @@ function TrySpendMoney(qnt, func) {
 
 window.setInterval(function() {
 	var rots = activeGearbox.rots
-	GainMoney(rots)
+	var cashMul = 1 + markup / 4
+	GainMoney(rots * cashMul)
+	if (Date.now()/1000 >= activeGearbox.nextUpdate) {
+		RecalculateGears()
+	}
 }, 1000)

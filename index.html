@@ -13,6 +13,7 @@
 		<script src="script/tabmanager.js" defer></script>
 		<script src="data/materials.js" defer></script>
 		<script src="script/script.js" defer></script>
+		<script src="script/options.js" defer></script>
 		<script src="script/machineshop.js" defer></script>
 		<script src="script/craftingroom.js" defer></script>
 	</head>
@@ -26,6 +27,14 @@
 		</div>
 		<div id="Tab0_0">
 			Options
+			<div>
+				<button onclick="Save()">Save</button>
+				<button onclick="Load()">Load</button>
+			</div>
+			<div>
+				<button id="save-file">Save to File</button>
+				<input type="file" id="load-file"></input>
+			</div>
 		</div>
 		<div id="Tab0_1">
 			Inventory
@@ -38,12 +47,19 @@
 				<div id="machine-content" class="column">
 					Machine Room Content
 				</div>
-				<div id="machine-upgrades" class="column">
-					<p id="machine-rots">This gearbox is producing 0 rot/s, worth $0 total</p>
-					<p id="machine-lubricate">This gearbox has been lubricated 0 times, so its production is multiplied by 1</p>
-					<button id="machine-lubricate-button">Lubricate ($100, 1.1x)</button>
-					<p id="machine-carve">This gearbox has been carved 0 times, so it can hold 10 gears</p>
-					<button id="machine-carve-button">Carve ($1000, +1 gear)</button>
+				<div class="column">
+					<div id="machine-global-upgrades">
+						<p id="machine-global-rots">You are producin a total of 0 rot/s, worth $0 total</p>
+						<p id="machine-global-markup">You have marked up the value of rots 0 times, so they are worth $1 each</p>
+						<button id="machine-global-markup-button">Markup ($1000, +0.25 $/rot)</button>
+					</div>
+					<div id="machine-upgrades">
+						<p id="machine-rots">This gearbox is producing 0 rot/s, worth $0 total</p>
+						<p id="machine-lubricate">This gearbox has been lubricated 0 times, so its production is multiplied by 1</p>
+						<button id="machine-lubricate-button">Lubricate ($100, 1.1x)</button>
+						<p id="machine-carve">This gearbox has been carved 0 times, so it can hold 10 gears</p>
+						<button id="machine-carve-button">Carve ($1000, +1 gear)</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -51,7 +67,9 @@
 			Crafting Room
 			<div>
 				<button id="assembly-tab-button" onclick="SwitchTab(1, 0)">Assembly Room</button>
-				<button onclick="SwitchTab(1, 1)">Carpenter's Shop</button>
+				<button onclick="SwitchTab(1, 1)">Polishing Shop</button>
+				<button onclick="SwitchTab(1, 2)">Scrap Heap</button>
+				<button onclick="SwitchTab(1, 3)">Carpenter's Shop</button>
 			</div>
 			<div class="flex-grid">
 				<div id="craft-inv" class="column">
@@ -78,6 +96,36 @@
 					</div>
 				</div>
 				<div id="Tab1_1" class="column">
+					<div class="flex-grid">
+						<div class="column">
+							<div id="polish-data">
+								Base Speed: ???
+								<br>
+								Polish Count: ???
+								<br>
+								Adjusted Speed: ???
+							</div>
+							<button id="polish-button">Polish ($100)</button>
+						</div>
+						<div id="polish-display" class="column">
+
+						</div>
+					</div>
+				</div>
+				<div id="Tab1_2" class="column">
+					<div class="flex-grid">
+						<div class="column">
+							<div id="scrap-display">
+
+							</div>
+							<button id="scrap-button">Scrap</button>
+						</div>
+						<div id="scrap-loot-display" class="column">
+
+						</div>
+					</div>
+				</div>
+				<div id="Tab1_3" class="column">
 					<div class="flex-grid">
 						<div id="carpenter-stats" class="column">
 							Material: ???

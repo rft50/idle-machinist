@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Idle Machinist Balance Page</title>
+		<script src="script/geargenerator.js" defer></script>
+		<script src="script/tabmanager.js" defer></script>
+		<script src="data/materials.js" defer></script>
+	</head>
+	<body>
+		<div>
+			<button onclick="SwitchTab(0, 0)">Materials and Optimal Polish</button>
+		</div>
+		<div id="Tab0_0">
+			<script src="balance/material_polish.js" defer></script>
+			<select id="material-polish-dropdown">
+				<option value="pure">Pure</option>
+			</select>
+			<div id="material-polish-area">
+
+			</div>
+		</div>
+	</body>
+</html>
