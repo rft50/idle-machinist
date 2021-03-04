@@ -13,6 +13,7 @@
 		<script src="script/tabmanager.js" defer></script>
 		<script src="data/materials.js" defer></script>
 		<script src="script/script.js" defer></script>
+		<script src="script/options.js" defer></script>
 		<script src="script/machineshop.js" defer></script>
 		<script src="script/craftingroom.js" defer></script>
 	</head>
@@ -26,6 +27,14 @@
 		</div>
 		<div id="Tab0_0">
 			Options
+			<div>
+				<button onclick="Save()">Save</button>
+				<button onclick="Load()">Load</button>
+			</div>
+			<div>
+				<button id="save-file">Save to File</button>
+				<input type="file" id="load-file"></input>
+			</div>
 		</div>
 		<div id="Tab0_1">
 			Inventory
