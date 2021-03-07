@@ -37,12 +37,12 @@ let moneyDisplay = document.getElementById("money")
 
 function GainMoney(qnt) {
 	money += qnt
-	moneyDisplay.textContent = "$" + Number.parseFloat(money).toFixed(2)
+	moneyDisplay.textContent = "$" + Util.display(money, true)
 }
 
 function SpendMoney(qnt) {
 	money -= qnt
-	moneyDisplay.textContent = "$" + Number.parseFloat(money).toFixed(2)
+	moneyDisplay.textContent = "$" + Util.display(money, true)
 }
 
 function TrySpendMoney(qnt, func) {

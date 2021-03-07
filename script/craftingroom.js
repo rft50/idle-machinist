@@ -82,9 +82,9 @@
 		let lifetime = (rim != null ? rim.gear.duration : 0) + (core != null ? core.gear.coreBonus : 0)
 		let allData = rim != null && core != null
 		let strData = [ // I'm sure this can be made better
-			`Lifespan: ${lifetime + (allData ? "" : "?")}`,
-			`Speed: ${rim != null ? rim.gear.speed : "???"}`,
-			`Effect: ${core != null ? (core.gear.effect.join(" ")) : "???"}`
+			`Lifespan: ${Util.lifetime(lifetime) + (allData ? "" : "?")}`,
+			`Speed: ${rim != null ? Util.display(rim.gear.speed) : "???"}`,
+			`Effect: ${core != null ? (core.gear.effect[0] + " " + Util.roman(core.gear.effect[1])) : "???"}`
 		]
 		document.getElementById("assembly-gear-data").innerHTML = strData.join("<br>")
 		document.getElementById("assembly-gear-build").disabled = !allData
@@ -102,12 +102,12 @@
 		let render = RenderGear(gear, "POLISH")
 		document.getElementById("polish-display").appendChild(render)
 		let strData = [
-			`Base Speed: ${gear.primary.gear.speed}`,
+			`Base Speed: ${Util.display(gear.primary.gear.speed)}`,
 			`Polish Count: ${polish}`,
-			`Adjusted Speed: ${gear.primary.gear.speed*Math.pow(2, polish)}`
+			`Adjusted Speed: ${Util.display(gear.primary.gear.speed*Math.pow(2, polish))}`
 		]
 		document.getElementById("polish-data").innerHTML = strData.join("<br>")
-		document.getElementById("polish-button").textContent = `Polish ($${100*Math.pow(5, polish)})`
+		document.getElementById("polish-button").textContent = `Polish ($${Util.display(100*Math.pow(5, polish), true)})`
 		document.getElementById("polish-button").disabled = polish >= 5
 	}
 
@@ -185,10 +185,10 @@
 		let statData = [
 			`Material: ${material.name} Wood`,
 			"", // intentionally blank as a divider
-			`Rim Lifespan: ${material.gear.duration}`,
-			`Rim Speed: ${material.gear.speed}`,
-			`Core Lifespan: ${material.gear.coreBonus}`,
-			`Core Effect: ${material.gear.effect[0]} ${material.gear.effect[1]}`
+			`Rim Lifespan: ${Util.lifetime(material.gear.duration)}`,
+			`Rim Speed: ${Util.display(material.gear.speed)}`,
+			`Core Lifespan: ${Util.lifetime(material.gear.coreBonus)}`,
+			`Core Effect: ${material.gear.effect[0]} ${Util.roman(material.gear.effect[1])}`
 		]
 		stats.innerHTML = statData.join("<br>")
 

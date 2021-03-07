@@ -17,7 +17,7 @@ let RecalculateGears
 	let carveButton = document.getElementById("machine-carve-button")
 
 	let trim = function(num) {
-		return Number.parseFloat(num).toFixed(2)
+		return Util.display(num, true)
 	}
 
 	let markupVal = function() {
@@ -37,7 +37,7 @@ let RecalculateGears
 		// replace this with a loop iterating over all gearboxes at some point
 		rots = activeGearbox.rots
 
-		globRotDisplay.textContent = `You are producing a total of $${trim(rots)} rot/s, worth $${trim(rots*markupVal())} total`
+		globRotDisplay.textContent = `You are producing a total of ${trim(rots)} rot/s, worth $${trim(rots*markupVal())} total`
 		globMarkupDisplay.textContent = `You have marked up the value of rots ${markup} times, so they are worth $${markupVal()} each`
 		globMarkupButton.textContent = `Markup ($${trim(1000*Math.pow(10, markup))}, +0.25 $/rot)`
 	}
