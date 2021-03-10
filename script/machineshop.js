@@ -117,11 +117,17 @@ let RecalculateGears
 		wipeGears()
 		let id = 1;
 		let addEquip = activeGearbox.gears.length < gearCap()
+		let tip = function(gear) {
+			return `${gear.rots} rots<br>
+			${gear.lifetime == 0 ? "Broken" : Util.lifetime(gear.lifetime)}<br>
+			${gear.effect[0]} ${Util.roman(gear.effect[1])}`
+		}
 		for (let gear of gearInventory) {
 			let render = RenderGear(gear, id)
 			if (addEquip) {
 				render.addEventListener("click", equipGear)
 			}
+			render = Util.tip(render, tip(gear))
 			inv.appendChild(render)
 			id++
 		}
@@ -130,6 +136,7 @@ let RecalculateGears
 			if (activeGearbox.gears[i] != null) {
 				render = RenderGear(activeGearbox.gears[i], id)
 				render.addEventListener("click", unequipGearGenerator(i));
+				render = Util.tip(render, tip(activeGearbox.gears[i]))
 				id++
 			} else {
 				render = document.createElement("img")

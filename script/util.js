@@ -85,3 +85,17 @@ Util.lifetime = function(t) {
 	}
 	return (neg ? "-" : "") + str.join(" ")
 }
+
+Util.tip = function(obj, text) {
+	if (text == null || text == undefined || text == "") {
+		return obj
+	}
+	var div = document.createElement("div")
+	div.classList.add("tooltip")
+	var tip = document.createElement("span")
+	tip.classList.add("tooltiptext")
+	tip.innerHTML = text
+	div.appendChild(obj)
+	div.appendChild(tip)
+	return div
+}

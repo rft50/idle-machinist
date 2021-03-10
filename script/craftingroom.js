@@ -26,7 +26,8 @@
 		clearChildren(inv)
 	}
 
-	function refreshParts(listener) {
+	// tip is a function that expects an element from the part inventory and returns a string
+	function refreshParts(listener, tip) {
 		wipeParts()
 		let id = 1
 		for (let part of partInventory) {
@@ -47,12 +48,15 @@
 					listener(e, part)
 				})
 			}
+			if (tip != null) {
+				render = Util.tip(render, tip(part))
+			}
 			inv.appendChild(render)
 			id++
 		}
 	}
 
-	function refreshPartsAsGears(listener) {
+	function refreshPartsAsGears(listener, tip) {
 		wipeParts()
 		let id = 1
 		for (let gear of gearInventory) {
@@ -61,6 +65,9 @@
 				render.addEventListener("click", function(e) {
 					listener(e, gear)
 				})
+			}
+			if (tip != null) {
+				render = Util.tip(render, tip(gear))
 			}
 			inv.appendChild(render)
 			id++
@@ -269,6 +276,13 @@
 					setGearAssembleData(assembleData[0][0], part.material)
 					break
 			}
+		}, function(part) {
+			switch (part.type) {
+				case "gear-rim":
+					return Util.display(part.material.gear.speed) + " rots<br>" + Util.lifetime(part.material.gear.duration)
+				case "gear-core":
+					return part.material.gear.effect[0] + " " + Util.roman(part.material.gear.effect[1]) + "<br>" + Util.lifetime(part.material.gear.coreBonus)
+			}
 		})
 	}, 1, 0)
 	AddTabClosedListener(function() {
@@ -279,6 +293,8 @@
 	AddTabOpenedListener(function() {
 		refreshPartsAsGears(function(e, gear) {
 			setPolishData(gear)
+		}, function(gear) {
+			return (gear.polish ?? 0) + " Polish"
 		})
 		setPolishData(null)
 	}, 1, 1)
@@ -359,6 +375,8 @@
 				setPolishData(selectedGear)
 				refreshPartsAsGears(function(e, gear) {
 					setPolishData(gear)
+				}, function(gear) {
+					return (gear.polish ?? 0) + " Polish"
 				})
 			}
 		}
