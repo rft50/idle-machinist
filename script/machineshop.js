@@ -57,7 +57,7 @@ let RecalculateGears
 			}
 			else {
 				if (gear.effect[0] == "persistent") {
-					rots += gear.rots * gear.effect[1]/10
+					rots += gear.rots * (gear.effect[1]/10) * (ObtainiumUpgrades.persistence ? 1.5 : 1)
 				}
 			}
 		}
@@ -69,7 +69,7 @@ let RecalculateGears
 		activeGearbox.nextUpdate = nextUpdate
 		rotDisplay.textContent = `This gearbox is producing ${trim(rots)} rot/s, worth $${trim(rots*markupVal())} total`
 		lubeDisplay.textContent = `This gearbox has been lubricated ${activeGearbox.upgrades.lubricate} times, so its production is multiplied by ${trim(lubeMul)}`
-		lubeButton.textContent = `Lubricate ($${trim(100*Math.pow(1.5, activeGearbox.upgrades.lubricate))}, 1.1x)`
+		lubeButton.textContent = `Lubricate ($${trim((ObtainiumUpgrades.lubricate?50:100)*Math.pow(1.5, activeGearbox.upgrades.lubricate))}, 1.1x)`
 		carveDisplay.textContent = `This gearbox has been carved ${activeGearbox.upgrades.carve} times, so it can hold ${activeGearbox.baseMax+activeGearbox.upgrades.carve} gears`
 		carveButton.textContent = `Carve ($${trim(1000*Math.pow(5, activeGearbox.upgrades.carve))}, +1 gear)`
 		
@@ -156,7 +156,7 @@ let RecalculateGears
 	})
 
 	lubeButton.addEventListener("click", function() {
-		let cost = Math.pow(1.5, activeGearbox.upgrades.lubricate) * 100
+		let cost = Math.pow(1.5, activeGearbox.upgrades.lubricate) * (ObtainiumUpgrades.lubricate ? 50 : 100)
 		if (TrySpendMoney(cost)) {
 			activeGearbox.upgrades.lubricate++
 			recalculate()

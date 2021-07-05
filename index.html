@@ -17,14 +17,22 @@
 		<script src="script/options.js" defer></script>
 		<script src="script/machineshop.js" defer></script>
 		<script src="script/craftingroom.js" defer></script>
+		<script src="script/obtainiumupgrades.js" defer></script>
 	</head>
 	<body>
-		<p>You have <text id="money">$0</text></p>
+		<p>
+			<button onclick="ObtainiumPrestige()" hidden id="obtainium-prestige" class="obtainium">Sell your shop for<br><text id="obtainium-prestige-reward">0 Obtainium</text></button>
+		</p>
+		<div class="flex-grid">
+			<span class="column">You have <text id="money">$0</text></span>
+			<span hidden class="obtainium column" id="obtainium-display">You have <text id="obtainium">0 Obtainium</text></span>
+		</div>
 		<div>
 			<button onclick="SwitchTab(0, 0)">Options</button>
 			<button onclick="SwitchTab(0, 1)">Inventory</button>
 			<button onclick="SwitchTab(0, 2)">Machine Room</button>
 			<button onclick="SwitchTab(0, 3)">Crafting Room</button>
+			<button onclick="SwitchTab(0, 4)" hidden class="obtainium" id="obtainium-tab">Obtainium Upgrades</button>
 		</div>
 		<div id="Tab0_0">
 			Options
@@ -156,6 +164,11 @@
 					</div>
 				</div>
 			</div>
+		</div>
+		<div id="Tab0_4">
+			<button id="cheaper-lubrication" class="obtainium">Lubrication Base Price is 50<br>1 Obtainium</button>
+			<button id="persistence-boost" class="obtainium">Persistence is 50% stronger<br>1 Obtainium</button>
+			<button id="scrap-boost" class="obtainium">Scrappiong is 20% more effective<br>1 Obtainium</button>
 		</div>
 	</body>
 </html>

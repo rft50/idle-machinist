@@ -134,6 +134,11 @@
 			broken ? 0.4 : 0.5, // mid
 			broken ? 0.2 : 0.25, // low
 		]
+		if (ObtainiumUpgrades.scrap) {
+			probs[0] *= 1.201
+			probs[1] *= 1.201
+			probs[2] *= 1.201
+		}
 		switch (gear.primary.material) {
 			case "wood":
 				loot.push([gear.primary, probs[0]])

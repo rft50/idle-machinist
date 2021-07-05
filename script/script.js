@@ -16,6 +16,7 @@ let partInventory = [
 	}
 ]
 let money = 0
+let obtainium = 0
 
 // gamestate
 let activeGearbox = {
@@ -34,6 +35,7 @@ let markup = 0
 
 // gameplay
 let moneyDisplay = document.getElementById("money")
+let obtainiumDisplay = document.getElementById("obtainium")
 
 function GainMoney(qnt) {
 	money += qnt
@@ -56,10 +58,32 @@ function TrySpendMoney(qnt, func) {
 	return false
 }
 
+function GainObtainium(qnt) {
+	obtainium += qnt
+	obtainiumDisplay.textContent = Util.display(obtainium, false) + " Obtainium"
+}
+
+function SpendObtainium(qnt) {
+	obtainium -= qnt
+	obtainiumDisplay.textContent = Util.display(obtainium, false) + " Obtainium"
+}
+
+function TrySpendObtainium(qnt, func) {
+	if (qnt <= money) {
+		SpendObtainium(qnt)
+		if (func != null) {
+			func()
+		}
+		return true
+	}
+	return false
+}
+
 window.setInterval(function() {
 	var rots = activeGearbox.rots
 	var cashMul = 1 + markup / 4
 	GainMoney(rots * cashMul)
+	CheckObtainium()
 	if (Date.now()/1000 >= activeGearbox.nextUpdate) {
 		RecalculateGears()
 	}

@@ -1,3 +1,13 @@
+/* materials/currencies */
+.obtainium {
+	color: #00aa00;
+	border-color: #00aa00;
+}
+
+.obtainium.purchased {
+	background-color: #007700;
+}
+
 /* tooltip stuff */
 .tooltiptext {
 	border-style: solid;
