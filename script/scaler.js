@@ -1,7 +1,12 @@
-"use strict"
+
 let Scalers = {};
 
 class Scaler {
+	/**
+	 * @param {string} name
+	 * @param {number} base
+	 * @param {number} multiplier
+	 */
 	constructor(name, base, multiplier) {
 		this.name = name;
 		this.base = base;
@@ -11,6 +16,10 @@ class Scaler {
 		this.freeLevels = {};
 	}
 
+	/**
+	 * @param {string|number} id
+	 * @param {number} effect
+	 */
 	setBaseModifier(id, effect) {
 		if (effect === 0) {
 			delete this.baseModifiers[id];
@@ -20,6 +29,10 @@ class Scaler {
 		}
 	}
 
+	/**
+	 * @param {string|number} id
+	 * @param {number} effect
+	 */
 	setMultiplierModifiers(id, effect) {
 		if (effect === 0) {
 			delete this.multiplierModifiers[id];
@@ -29,6 +42,10 @@ class Scaler {
 		}
 	}
 
+	/**
+	 * @param {string|number} id
+	 * @param {number} effect
+	 */
 	setFreeLevels(id, effect) {
 		if (effect === 0) {
 			delete this.freeLevels[id];
@@ -38,6 +55,9 @@ class Scaler {
 		}
 	}
 
+	/**
+	 * @return {number}
+	 */
 	getBase() {
 		let base = this.base;
 		for (const mod in this.baseModifiers) {
@@ -46,6 +66,9 @@ class Scaler {
 		return base;
 	}
 
+	/**
+	 * @return {number}
+	 */
 	getMultiplier() {
 		let mul = this.multiplier;
 		for (const mod in this.multiplierModifiers) {
@@ -54,6 +77,9 @@ class Scaler {
 		return mul;
 	}
 
+	/**
+	 * @return {number}
+	 */
 	getFreeLevels() {
 		let lvls = 0;
 		for (const lvl in this.freeLevels) {
@@ -62,7 +88,10 @@ class Scaler {
 		return lvls;
 	}
 
-	getCostAtLevel(level) {
+	/**
+	 * @param {number} level
+	 */
+	getAtLevel(level) {
 		return this.getBase() * Math.pow(this.getMultiplier(), level + this.getFreeLevels());
 	}
 }

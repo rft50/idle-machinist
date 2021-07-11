@@ -1,34 +1,38 @@
-"use strict"
-let ObtainiumPrestige
-let CheckObtainium
-let ObtainiumUpgrades = {}
+/* global Game, MachineShop */
+let Obtainium = {};
+
+Obtainium.upgrades = {};
 {
-	function determineObtainiumReward(cash) {
-		let cashOrder = Math.log10(cash)
-		let baseOrder = 6 // 1,000,000
-		let deltaOrder = Math.log10(1.5)
+	/**
+	 * @param {number} cash
+	 * @return {number}
+	 */
+	const determineObtainiumReward = cash => {
+		let cashOrder = Math.log10(cash);
+		let baseOrder = 6; // 1,000,000
+		let deltaOrder = Math.log10(1.5);
 
 		if (cashOrder >= baseOrder) {
-			cashOrder -= baseOrder
-			return Math.floor(cashOrder/deltaOrder) + 1
+			cashOrder -= baseOrder;
+			return Math.floor(cashOrder/deltaOrder) + 1;
 		}
-		return 0
-	}
+		return 0;
+	};
 
-	function checkObtainium() {
-		var newObtainium = determineObtainiumReward(money)
-		document.getElementById("obtainium-prestige-reward").innerText = newObtainium + " Obtainium"
+	Obtainium.checkObtainium = () => {
+		let newObtainium = determineObtainiumReward(Game.money);
+		document.getElementById("obtainium-prestige-reward").innerText = newObtainium + " Obtainium";
 		if (newObtainium > 0) {
-			document.getElementById("obtainium-prestige").hidden = false
+			document.getElementById("obtainium-prestige").hidden = false;
 		}
-	}
+	};
 
-	function obtainiumPrestige() {
-		var newObtainium = determineObtainiumReward(money)
+	Obtainium.prestige = () => {
+		let newObtainium = determineObtainiumReward(Game.money);
 		if (newObtainium > 0) {
-			gearInventory = []
-			partInventory = []
-			activeGearbox = {
+			Game.gearInventory = [];
+			Game.partInventory = [];
+			Game.activeGearbox = {
 				bonus: 0,
 				baseMax: 10,
 				operationMin: 0,
@@ -39,46 +43,43 @@ let ObtainiumUpgrades = {}
 				gears: [],
 				rots: 0,
 				nextUpdate: Infinity
-			}
-			markup = 0
+			};
+			Game.markup = 0;
 			
 
-			GainObtainium(newObtainium)
-			RecalculateGears()
-			document.getElementById("obtainium-display").hidden = false
-			document.getElementById("obtainium-tab").hidden = false
-			money = 30
+			Game.gainObtainium(newObtainium);
+			MachineShop.recalculateGears();
+			document.getElementById("obtainium-display").hidden = false;
+			document.getElementById("obtainium-tab").hidden = false;
+			Game.money = 30;
 		}
-	}
+	};
 
 	document.getElementById("cheaper-lubrication").addEventListener("click", function() {
-		if (!ObtainiumUpgrades.lubricate) {
-			if (TrySpendObtainium(1)) {
-				ObtainiumUpgrades.lubricate = true;
-				document.getElementById("cheaper-lubrication").classList.add("purchased")
-				RecalculateGear()
+		if (!Obtainium.upgrades.lubricate) {
+			if (Game.trySpendObtainium(1)) {
+				Obtainium.upgrades.lubricate = true;
+				document.getElementById("cheaper-lubrication").classList.add("purchased");
+				MachineShop.recalculateGears();
 			}
 		}
-	})
+	});
 
 	document.getElementById("persistence-boost").addEventListener("click", function() {
-		if (!ObtainiumUpgrades.persistence) {
-			if (TrySpendObtainium(1)) {
-				ObtainiumUpgrades.persistence = true;
-				document.getElementById("persistence-boost").classList.add("purchased")
+		if (!Obtainium.upgrades.persistence) {
+			if (Game.trySpendObtainium(1)) {
+				Obtainium.upgrades.persistence = true;
+				document.getElementById("persistence-boost").classList.add("purchased");
 			}
 		}
-	})
+	});
 
 	document.getElementById("scrap-boost").addEventListener("click", function() {
-		if (!ObtainiumUpgrades.scrap) {
-			if (TrySpendObtainium(1)) {
-				ObtainiumUpgrades.scrap = true;
-				document.getElementById("scrap-boost").classList.add("purchased")
+		if (!Obtainium.upgrades.scrap) {
+			if (Game.trySpendObtainium(1)) {
+				Obtainium.upgrades.scrap = true;
+				document.getElementById("scrap-boost").classList.add("purchased");
 			}
 		}
-	})
-
-	CheckObtainium = checkObtainium;
-	ObtainiumPrestige = obtainiumPrestige;
+	});
 }
