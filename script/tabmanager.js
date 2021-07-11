@@ -18,8 +18,6 @@ let tabCloseListeners = [];
 
 		tabSet[i] = [];
 		activeTab[i] = 0;
-		tabOpenListeners[i] = [];
-		tabCloseListeners[i] = [];
 		j = 0;
 		while (true) {
 			elem = document.getElementById(`Tab${i}_${j}`);
@@ -43,55 +41,57 @@ for (var i = 0; i < tabSet.length; i++) {
 	}
 }
 
+
+class TabListener {
+	constructor(payload, tabSetId, tabId) {
+		this.payload = payload
+		this.tabSetId = tabSetId
+		this.tabId = tabId
+	}
+}
+
+
 // define the listener
 
-function SwitchTab(tabGroup, tabId) {
-	let tabs = tabSet[tabGroup];
-	let opens = tabOpenListeners[tabGroup];
-	let closes = tabCloseListeners[tabGroup];
+function SwitchTab(tabSetId, newTabId) {
+	let tabs = tabSet[tabSetId];
+	let currentTabId = activeTab[tabSetId];
 
-	for (let i = 0; i < closes.length; i++) {
-		if (closes[i][1] == activeTab[tabGroup]) {
-			closes[i][0]()
-		}
+	let triggeredCloseListeners = tabCloseListeners
+		.filter(l => l.tabSetId == tabSetId)
+		.filter(l => l.tabId == currentTabId)
+	for (const tabListener of triggeredCloseListeners) {
+		tabListener.payload();
 	}
+
 	for (let i = 0; i < tabs.length; i++) {
-		tabs[i].hidden = i != tabId; // hides all tabs, aside from the selected one
+		tabs[i].hidden = i != newTabId; // hides all tabs, aside from the selected one
 	}
-	activeTab[tabGroup] = tabId
-	for (let i = 0; i < opens.length; i++) {
-		if (opens[i][1] == tabId) {
-			opens[i][0]()
-		}
+	activeTab[tabSetId] = newTabId
+
+	let triggeredOpenListeners = tabOpenListeners
+		.filter(l => l.tabSetId == tabSetId)
+		.filter(l => l.tabId == newTabId)
+	for (const tabListener of triggeredOpenListeners) {
+		tabListener.payload();
 	}
 }
 
 // define adding and removing tab change listeners
 
-function AddTabOpenedListener(listener, tabSetId, tabId) {
-	tabOpenListeners[tabSetId].push([listener, tabId]);
+
+function AddTabOpenedListener(payload, tabSetId, tabId) {
+	tabOpenListeners.push(new TabListener(payload, tabSetId, tabId))
 }
 
-function RemoveTabOpenedListener(listener, tabSetId) {
-	for (let i = 0; i < tabOpenListeners[tabSetId].length; i++) {
-		if (tabOpenListeners[tabSetId][0] === listener) {
-			tabOpenListeners[tabSetId].splice(i, 1)
-			return;
-		}
-	}
-	return;
+function RemoveTabOpenedListener(payload, tabSetId) {
+	tabOpenListeners.splice(a.findIndex(l => l.payload === payload && l.tabSetId == tabSetId), 1)
 }
 
-function AddTabClosedListener(listener, tabSetId, tabId) {
-	tabCloseListeners[tabSetId].push([listener, tabId]);
+function AddTabClosedListener(payload, tabSetId, tabId) {
+	tabCloseListeners.push(new TabListener(payload, tabSetId, tabId))
 }
 
-function RemoveTabClosedListener(listener, tabSetId) {
-	for (let i = 0; i < tabCloseListeners[tabSetId].length; i++) {
-		if (tabCloseListeners[tabSetId][0] === listener) {
-			tabCloseListeners[tabSetId].splice(i, 1)
-			return;
-		}
-	}
-	return;
+function RemoveTabClosedListener(payload, tabSetId) {
+	tabCloseListeners.splice(a.findIndex(l => l.payload === payload && l.tabSetId == tabSetId), 1)
 }
