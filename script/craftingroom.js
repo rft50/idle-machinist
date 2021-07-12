@@ -84,6 +84,7 @@
 		for (let gear of Game.gearInventory) {
 			let render = GearGenerator.render(gear, id);
 			appendPart(render, gear, listener, tip);
+			id++;
 		}
 	};
 
