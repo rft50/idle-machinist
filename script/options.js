@@ -65,11 +65,11 @@ let Options = {};
 		// upgrades
 		Game.markup = parseInt(file.markup) || 0;
 		Game.gearInventory = [];
-		for (let gear of Object.values(file.gearInventory)) {
+		for (let gear of Object.values(file.gearInventory || {})) {
 			Game.gearInventory.push(refreshGear(gear));
 		}
 		Game.partInventory = [];
-		for (let part of Object.values(file.partInventory)) {
+		for (let part of Object.values(file.partInventory || {})) {
 			Game.partInventory.push({
 				material: parseMaterial(part.material),
 				type: part.type
@@ -77,14 +77,14 @@ let Options = {};
 		}
 
 		// obtainium
-		Game.obtainium = file.obtainium;
-		Obtainium.upgrades = file.obtainiumUpgrades;
+		Game.obtainium = file.obtainium || 0;
+		Obtainium.upgrades = file.obtainiumUpgrades || {};
 		Scalers.LubeCost.setBaseModifier("cheaper-lubrication", Obtainium.upgrades.lubricate ? 0.5 : 0);
 		document.getElementById("cheaper-lubrication").className = Obtainium.upgrades.lubricate ? "obtainium purchased" : "obtainium";
 		document.getElementById("persistence-boost").className = Obtainium.upgrades.persistence ? "obtainium purchased" : "obtainium";
 		document.getElementById("scrap-boost").className = Obtainium.upgrades.scrap ? "obtainium purchased" : "obtainium";
 
-		let hasObtainium = !(Game.obtainium > 0 || Obtainium.upgrades);
+		let hasObtainium = Game.obtainium > 0 || Obtainium.upgrades !== {};
 		document.getElementById("obtainium-prestige").hidden = hasObtainium;
 		document.getElementById("obtainium-display").hidden = hasObtainium;
 		document.getElementById("obtainium-tab").hidden = hasObtainium;
@@ -92,16 +92,19 @@ let Options = {};
 		Game.gainObtainium(0);
 
 		// misc
+		file.activeGearbox = file.activeGearbox || {};
+		file.activeGearbox.upgrades = file.activeGearbox.upgrades || {};
+
 		Game.activeGearbox = {};
-		Game.activeGearbox.baseMax = parseInt(file.activeGearbox.baseMax);
-		Game.activeGearbox.bonus = parseFloat(file.activeGearbox.bonus);
-		Game.activeGearbox.opeationMin = parseFloat(file.activeGearbox.operationMin);
+		Game.activeGearbox.baseMax = parseInt(file.activeGearbox.baseMax || 10);
+		Game.activeGearbox.bonus = parseFloat(file.activeGearbox.bonus || 0);
+		Game.activeGearbox.opeationMin = parseFloat(file.activeGearbox.operationMin || 0);
 		Game.activeGearbox.upgrades = {
-			lubricate: parseInt(file.activeGearbox.upgrades.lubricate),
-			carve: parseInt(file.activeGearbox.upgrades.carve)
+			lubricate: parseInt(file.activeGearbox.upgrades.lubricate || 0),
+			carve: parseInt(file.activeGearbox.upgrades.carve || 0)
 		};
 		Game.activeGearbox.gears = [];
-		for (let gear of Object.values(file.activeGearbox.gears)) {
+		for (let gear of Object.values(file.activeGearbox.gears || {})) {
 			let g = refreshGear(gear);
 			g.placed = Math.floor(Date.now()/1000);
 			Game.activeGearbox.gears.push(g);
