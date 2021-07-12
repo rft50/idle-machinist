@@ -1,4 +1,4 @@
-/* global Game, MachineShop, materials */
+/* global Game, MachineShop, Obtainium, Scalers, materials */
 let Options = {};
 
 {
@@ -48,6 +48,10 @@ let Options = {};
 		// upgrades
 		file.markup = Game.markup;
 
+		// obtainium
+		file.obtainium = Game.obtainium;
+		file.obtainiumUpgrades = Obtainium.upgrades;
+
 		// misc
 		file.activeGearbox = removeMaterialReferences(Game.activeGearbox);
 
@@ -71,6 +75,21 @@ let Options = {};
 				type: part.type
 			});
 		}
+
+		// obtainium
+		Game.obtainium = file.obtainium;
+		Obtainium.upgrades = file.obtainiumUpgrades;
+		Scalers.LubeCost.setBaseModifier("cheaper-lubrication", Obtainium.upgrades.lubricate ? 0.5 : 0);
+		document.getElementById("cheaper-lubrication").className = Obtainium.upgrades.lubricate ? "obtainium purchased" : "obtainium";
+		document.getElementById("persistence-boost").className = Obtainium.upgrades.persistence ? "obtainium purchased" : "obtainium";
+		document.getElementById("scrap-boost").className = Obtainium.upgrades.scrap ? "obtainium purchased" : "obtainium";
+
+		let hasObtainium = !(Game.obtainium > 0 || Obtainium.upgrades);
+		document.getElementById("obtainium-prestige").hidden = hasObtainium;
+		document.getElementById("obtainium-display").hidden = hasObtainium;
+		document.getElementById("obtainium-tab").hidden = hasObtainium;
+
+		Game.gainObtainium(0);
 
 		// misc
 		Game.activeGearbox = {};

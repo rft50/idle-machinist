@@ -1,4 +1,4 @@
-/* global Game, MachineShop */
+/* global Game, MachineShop, Scalers */
 let Obtainium = {};
 
 Obtainium.upgrades = {};
@@ -59,6 +59,7 @@ Obtainium.upgrades = {};
 		if (!Obtainium.upgrades.lubricate) {
 			if (Game.trySpendObtainium(1)) {
 				Obtainium.upgrades.lubricate = true;
+				Scalers.LubeCost.setBaseModifier("cheaper-lubrication", 0.5);
 				document.getElementById("cheaper-lubrication").classList.add("purchased");
 				MachineShop.recalculateGears();
 			}
