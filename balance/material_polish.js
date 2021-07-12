@@ -1,41 +1,41 @@
-"use strict"
+/* global materials, GearGenerator */
 
 {
-	let dropdown = document.getElementById("material-polish-dropdown")
-	let area = document.getElementById("material-polish-area")
-	let selectedCore = ""
+	let dropdown = document.getElementById("material-polish-dropdown");
+	let area = document.getElementById("material-polish-area");
+	let selectedCore = "";
 
-	function getCore(bypass) {
-		if (selectedCore == "pure") {
-			return bypass
+	const getCore = bypass => {
+		if (selectedCore === "pure") {
+			return bypass;
 		}
-		return materials[selectedCore]
-	}
+		return materials[selectedCore];
+	};
 
-	function refresh() {
+	const refresh = () => {
 		while (area.hasChildNodes()) {
-			area.removeChild(area.firstChild)
+			area.removeChild(area.firstChild);
 		}
-		selectedCore = dropdown.value
-		for (var mater in materials) {
-			var mat = materials[mater]
-			var core = getCore(mat)
-			var baseCost = mat.cost * 2 + core.cost
-			var baseProduction = (mat.gear.duration + core.gear.coreBonus) * mat.gear.speed
-			var ROIs = []
-			var polishTally = 0
-			for (var i = 0; i <= 5; i++) {
-				ROIs[i] = (baseProduction * Math.pow(2, i)) /
-						(baseCost + polishTally)
-				polishTally += 100 * Math.pow(5, i)
+		selectedCore = dropdown.value;
+		for (let mater in materials) {
+			let mat = materials[mater];
+			let core = getCore(mat);
+			let baseCost = mat.cost * 2 + core.cost;
+			let baseProduction = (mat.gear.duration + core.gear.coreBonus) * mat.gear.speed;
+			let ROIs = [];
+			let polishTally = 0;
+			for (let i = 0; i <= 5; i++) {
+				ROIs[i] = baseProduction * Math.pow(2, i) /
+						(baseCost + polishTally);
+				polishTally += 100 * Math.pow(5, i);
 			}
-			var maxROI = ROIs.reduce((x, y) => Math.max(x, y))
-			var maxROIi = ROIs.indexOf(maxROI)
+			let maxROI = ROIs.reduce((x, y) => Math.max(x, y));
+			let maxROIi = ROIs.indexOf(maxROI);
 
-			var div = document.createElement("div")
-			var temp = GenerateGear(mat, core, mater, maxROIi)
-			div.appendChild(temp)
-			temp = document.createElement("div")
+			let div = document.createElement("div");
+			let temp = GearGenerator.generate(mat, core, mater, maxROIi);
+			div.appendChild(temp);
+			temp = document.createElement("div");
 			temp.innerHTML = `
 				${mater}/${core.name}
 				<br>
@@ -46,18 +46,18 @@
 				Optimal Polish: ${maxROIi}
 				<br>
 				Optimal Polish ROI: ${(maxROI*100).toFixed(2)}%
-			`
-			div.appendChild(temp)
-			area.appendChild(div)
+			`;
+			div.appendChild(temp);
+			area.appendChild(div);
 		}
+	};
+
+	for (let mater in materials) {
+		let option = document.createElement("option");
+		option.value = mater;
+		option.textContent = mater;
+		dropdown.appendChild(option);
 	}
 
-	for (var mater in materials) {
-		var option = document.createElement("option")
-		option.value = mater
-		option.textContent = mater
-		dropdown.appendChild(option)
-	}
-
-	dropdown.addEventListener("change", refresh)
+	dropdown.addEventListener("change", refresh);
 }

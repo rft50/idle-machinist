@@ -1,9 +1,9 @@
-"use strict";
+let TabManager = {};
 
-let tabSet = [];
-let activeTab = [];
-let tabOpenListeners = [];
-let tabCloseListeners = [];
+TabManager.tabSet = [];
+TabManager.activeTab = [];
+TabManager.tabOpenListeners = [];
+TabManager.tabCloseListeners = [];
 
 // discovery
 
@@ -16,17 +16,15 @@ let tabCloseListeners = [];
 			break;
 		}
 
-		tabSet[i] = [];
-		activeTab[i] = 0;
-		tabOpenListeners[i] = [];
-		tabCloseListeners[i] = [];
+		TabManager.tabSet[i] = [];
+		TabManager.activeTab[i] = 0;
 		j = 0;
 		while (true) {
 			elem = document.getElementById(`Tab${i}_${j}`);
 			if (elem == null) { // stop hunting when you don't see a new tab to put in the list
 				break;
 			}
-			tabSet[i][j] = elem;
+			TabManager.tabSet[i][j] = elem;
 
 			j++; // keep hunting for tabs in a group
 		}
@@ -37,61 +35,78 @@ let tabCloseListeners = [];
 
 // hide all but the firsts
 
-for (var i = 0; i < tabSet.length; i++) {
-	for (var j = 0; j < tabSet[i].length; j++) {
-		tabSet[i][j].hidden = j != 0;
+for (let i = 0; i < TabManager.tabSet.length; i++) {
+	for (let j = 0; j < TabManager.tabSet[i].length; j++) {
+		TabManager.tabSet[i][j].hidden = j !== 0;
 	}
 }
 
 // define the listener
 
-function SwitchTab(tabGroup, tabId) {
-	let tabs = tabSet[tabGroup];
-	let opens = tabOpenListeners[tabGroup];
-	let closes = tabCloseListeners[tabGroup];
-
-	for (let i = 0; i < closes.length; i++) {
-		if (closes[i][1] == activeTab[tabGroup]) {
-			closes[i][0]()
-		}
-	}
-	for (let i = 0; i < tabs.length; i++) {
-		tabs[i].hidden = i != tabId; // hides all tabs, aside from the selected one
-	}
-	activeTab[tabGroup] = tabId
-	for (let i = 0; i < opens.length; i++) {
-		if (opens[i][1] == tabId) {
-			opens[i][0]()
-		}
+class TabListener {
+	constructor(payload, tabSetId, tabId) {
+		this.payload = payload;
+		this.tabSetId = tabSetId;
+		this.tabId = tabId;
 	}
 }
+
+/**
+ * @param {number} tabSetId
+ * @param {number} newTabId
+ */
+TabManager.switchTab = function(tabSetId, newTabId) {
+	let tabs = TabManager.tabSet[tabSetId];
+	let currentTabId = TabManager.activeTab[tabSetId];
+
+	TabManager.tabCloseListeners
+		.filter(l => l.tabSetId === tabSetId)
+		.filter(l => l.tabId === currentTabId)
+		.forEach(l => l.payload());
+
+	for (let i = 0; i < tabs.length; i++) {
+		tabs[i].hidden = i !== newTabId; // hides all tabs, aside from the selected one
+	}
+	TabManager.activeTab[tabSetId] = newTabId;
+
+	TabManager.tabOpenListeners
+		.filter(l => l.tabSetId === tabSetId)
+		.filter(l => l.tabId === newTabId)
+		.forEach(l => l.payload());
+};
 
 // define adding and removing tab change listeners
 
-function AddTabOpenedListener(listener, tabSetId, tabId) {
-	tabOpenListeners[tabSetId].push([listener, tabId]);
-}
+/**
+ * @param {function() : void} payload
+ * @param {number} tabSetId
+ * @param {number} tabId
+ */
+TabManager.addTabOpenedListener = function(payload, tabSetId, tabId) {
+	TabManager.tabOpenListeners.push(new TabListener(payload, tabSetId, tabId));
+};
 
-function RemoveTabOpenedListener(listener, tabSetId) {
-	for (let i = 0; i < tabOpenListeners[tabSetId].length; i++) {
-		if (tabOpenListeners[tabSetId][0] === listener) {
-			tabOpenListeners[tabSetId].splice(i, 1)
-			return;
-		}
-	}
-	return;
-}
+/**
+ * @param {function() : void} payload
+ * @param {number} tabSetId
+ */
+TabManager.removeTabOpenedListener = function(payload, tabSetId) {
+	TabManager.tabOpenListeners.splice(TabManager.tabOpenListeners.findIndex(l => l.payload === payload && l.tabSetId === tabSetId), 1);
+};
 
-function AddTabClosedListener(listener, tabSetId, tabId) {
-	tabCloseListeners[tabSetId].push([listener, tabId]);
-}
+/**
+ * @param {function() : void} payload
+ * @param {number} tabSetId
+ * @param {number} tabId
+ */
+TabManager.addTabClosedListener = function(payload, tabSetId, tabId) {
+	TabManager.tabCloseListeners.push(new TabListener(payload, tabSetId, tabId));
+};
 
-function RemoveTabClosedListener(listener, tabSetId) {
-	for (let i = 0; i < tabCloseListeners[tabSetId].length; i++) {
-		if (tabCloseListeners[tabSetId][0] === listener) {
-			tabCloseListeners[tabSetId].splice(i, 1)
-			return;
-		}
-	}
-	return;
-}
+/**
+ * @param {function() : void} payload
+ * @param {number} tabSetId
+ */
+TabManager.removeTabClosedListener = function(payload, tabSetId) {
+	TabManager.tabCloseListeners.splice(TabManager.tabCloseListeners.findIndex(l => l.payload === payload && l.tabSetId === tabSetId), 1);
+};

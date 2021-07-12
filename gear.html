@@ -211,11 +211,11 @@
 				let gen = []
 
 				button.addEventListener("click", function() {
-					while (gen.length != 0) {
+					while (gen.length !== 0) {
 						div.removeChild(gen.pop())
 					}
 					for (let i = 0; i < 3; i++) {
-						let x = GenerateGear(materials.Oak, materials.Pine, 4, i)
+						let x = GearGenerator.generate(materials.Oak, materials.Pine, 4, i)
 						div.appendChild(x)
 						gen[i] = x
 					}
