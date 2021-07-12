@@ -8,6 +8,8 @@
 		<link rel="alternate stylesheet" type="text/css" href="style/dark.css" title="dark">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<!-- scripts! all of the scripts! -->
+		<script src="script/util.js" defer></script>
+		<script src="script/scaler.js" defer></script>
 		<script src="script/geargenerator.js" defer></script>
 		<script src="script/materialgenerator.js" defer></script>
 		<script src="script/tabmanager.js" defer></script>
@@ -16,24 +18,32 @@
 		<script src="script/options.js" defer></script>
 		<script src="script/machineshop.js" defer></script>
 		<script src="script/craftingroom.js" defer></script>
+		<script src="script/obtainiumupgrades.js" defer></script>
 	</head>
 	<body>
-		<p>You have <text id="money">$0</text></p>
+		<p>
+			<button onclick="Obtainium.prestige()" hidden id="obtainium-prestige" class="obtainium">Sell your shop for<br><text id="obtainium-prestige-reward">0 Obtainium</text></button>
+		</p>
+		<div class="flex-grid">
+			<span class="column">You have <text id="money">$0</text></span>
+			<span hidden class="obtainium column" id="obtainium-display">You have <text id="obtainium">0 Obtainium</text></span>
+		</div>
 		<div>
-			<button onclick="SwitchTab(0, 0)">Options</button>
-			<button onclick="SwitchTab(0, 1)">Inventory</button>
-			<button onclick="SwitchTab(0, 2)">Machine Room</button>
-			<button onclick="SwitchTab(0, 3)">Crafting Room</button>
+			<button onclick="TabManager.switchTab(0, 0)">Options</button>
+			<button onclick="TabManager.switchTab(0, 1)">Inventory</button>
+			<button onclick="TabManager.switchTab(0, 2)">Machine Room</button>
+			<button onclick="TabManager.switchTab(0, 3)">Crafting Room</button>
+			<button onclick="TabManager.switchTab(0, 4)" hidden class="obtainium" id="obtainium-tab">Obtainium Upgrades</button>
 		</div>
 		<div id="Tab0_0">
 			Options
 			<div>
-				<button onclick="Save()">Save</button>
-				<button onclick="Load()">Load</button>
+				<button onclick="Options.save()">Save</button>
+				<button onclick="Options.load()">Load</button>
 			</div>
 			<div>
 				<button id="save-file">Save to File</button>
-				<input type="file" id="load-file"></input>
+				<input type="file" id="load-file"/>
 			</div>
 		</div>
 		<div id="Tab0_1">
@@ -50,8 +60,8 @@
 				<div class="column">
 					<div id="machine-global-upgrades">
 						<p id="machine-global-rots">You are producin a total of 0 rot/s, worth $0 total</p>
-						<p id="machine-global-markup">You have marked up the value of rots 0 times, so they are worth $1 each</p>
-						<button id="machine-global-markup-button">Markup ($1000, +0.25 $/rot)</button>
+						<p id="machine-global-Game.markup">You have marked up the value of rots 0 times, so they are worth $1 each</p>
+						<button id="machine-global-Game.markup-button">Markup ($1000, +0.25 $/rot)</button>
 					</div>
 					<div id="machine-upgrades">
 						<p id="machine-rots">This gearbox is producing 0 rot/s, worth $0 total</p>
@@ -66,10 +76,10 @@
 		<div id="Tab0_3">
 			Crafting Room
 			<div>
-				<button id="assembly-tab-button" onclick="SwitchTab(1, 0)">Assembly Room</button>
-				<button onclick="SwitchTab(1, 1)">Polishing Shop</button>
-				<button onclick="SwitchTab(1, 2)">Scrap Heap</button>
-				<button onclick="SwitchTab(1, 3)">Carpenter's Shop</button>
+				<button id="assembly-tab-button" onclick="TabManager.switchTab(1, 0)">Assembly Room</button>
+				<button onclick="TabManager.switchTab(1, 1)">Polishing Shop</button>
+				<button onclick="TabManager.switchTab(1, 2)">Scrap Heap</button>
+				<button onclick="TabManager.switchTab(1, 3)">Carpenter's Shop</button>
 			</div>
 			<div class="flex-grid">
 				<div id="craft-inv" class="column">
@@ -155,6 +165,11 @@
 					</div>
 				</div>
 			</div>
+		</div>
+		<div id="Tab0_4">
+			<button id="cheaper-lubrication" class="obtainium">Lubrication Base Price is 50<br>1 Obtainium</button>
+			<button id="persistence-boost" class="obtainium">Persistence is 50% stronger<br>1 Obtainium</button>
+			<button id="scrap-boost" class="obtainium">Scrapping is 20% more effective<br>1 Obtainium</button>
 		</div>
 	</body>
 </html>

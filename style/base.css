@@ -5,3 +5,24 @@
 .column {
 	flex: 1;
 }
+
+/* tooltip stuff */
+.tooltip {
+	position: relative;
+	display: inline-block;
+}
+
+.tooltiptext {
+	width: 98px;
+	text-align: center;
+	padding: 5px 0;
+	position: absolute;
+	z-index: 1;
+	left: 0;
+	bottom: 100px;
+	visibility: hidden;
+}
+
+.tooltip > :hover + .tooltiptext {
+	visibility: visible;
+}

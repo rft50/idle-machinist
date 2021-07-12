@@ -14,7 +14,27 @@ gear: {
 Please try to keep this file grouped by material and sorted cheapest to most expensive.
 */
 
-var materials = {
+/**
+ * @typedef material
+ * @property {string} name
+ * @property {string} material
+ * @property {number} cost
+ * @property {number[]} color
+ * @property {gearData} gear
+ */
+
+/**
+ * @typedef gearData
+ * @property {number} duration
+ * @property {number} speed
+ * @property {number} coreBonus
+ * @property {[string, number]} effect
+ */
+
+/**
+ * @type {Object.<material>}
+ */
+let materials = {
 	// Wood
 	Oak: {
 		material: "wood",
@@ -60,13 +80,13 @@ var materials = {
 			effect: ["persistent", 2]
 		}
 	}
+};
+
+for (let idx in materials) {
+	materials[idx].name = idx;
 }
 
-for (var idx in materials) {
-	materials[idx].name = idx
-}
-
-var voidMaterial = {
+let voidMaterial = {
 	material: "void",
 	color: [0, 0, 0, 0]
-}
+};
