@@ -105,7 +105,7 @@ let MachineShop = {};
 	let equipGear = function(event) {
 		let idx = -1;
 		for (let i = 0; i < inv.childElementCount; i++) {
-			if (inv.children[i] === event.currentTarget) {
+			if (inv.children[i].contains(event.currentTarget)) {
 				idx = i;
 				break;
 			}
