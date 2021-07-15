@@ -1,7 +1,12 @@
 /* global Game, MachineShop, Obtainium, Scalers, materials */
 let Options = {};
+Options.autoSave = false;
 
 {
+	const updateAutoSaveButton = () => {
+		document.getElementById("auto-save-state").textContent = Options.autoSave ? 'On' : 'Off';
+	};
+
 	const removeMaterialReferences = tbl => {
 		if (typeof tbl !== "object") {
 			return tbl;
@@ -54,6 +59,8 @@ let Options = {};
 
 		// misc
 		file.activeGearbox = removeMaterialReferences(Game.activeGearbox);
+
+		file.autoSave = Options.autoSave;
 
 		return file;
 	};
@@ -110,6 +117,9 @@ let Options = {};
 			Game.activeGearbox.gears.push(g);
 		}
 
+		Options.autoSave = file.autoSave || false; // Default to false if null
+		updateAutoSaveButton();
+
 		MachineShop.recalculateGears();
 	};
 
@@ -132,6 +142,10 @@ let Options = {};
 	Options.load = function() {
 		loadFile(JSON.parse(localStorage.getItem("saveFile") || "{}"));
 	};
+	Options.toggleAutoSave = function() {
+		Options.autoSave = !Options.autoSave;
+		updateAutoSaveButton();
+	};
 	document.getElementById("save-file").addEventListener("click", function() {
 		download("Idle Machinist Save.txt", JSON.stringify(saveFile()));
 	});
@@ -144,3 +158,15 @@ let Options = {};
 		reader.readAsText(file);
 	});
 }
+
+window.setInterval(function() {
+	if (Options.autoSave) {
+		Options.save();
+	}
+}, 60 * 1000); // Auto save every minute
+
+window.onbeforeunload = function(){
+	if (Options.autoSave) {
+		Options.save();
+	}
+};

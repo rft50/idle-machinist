@@ -1,5 +1,4 @@
 let Util = {};
-Util.displayMode = "Normal";
 
 // 5 -> 005
 // turn any number into a string of the specified length, padding with 0s on the left
@@ -9,11 +8,7 @@ Util.displayMode = "Normal";
  * @return {string}
  */
 Util.puff = function(num, pf) {
-	let str = "" + num;
-	while (str.length < pf) {
-		str = "0" + str;
-	}
-	return str;
+	return num.padStart(pf, "0");
 };
 
 // 1234.5 -> 1,234.50
@@ -25,34 +20,7 @@ Util.puff = function(num, pf) {
  * @return {string}
  */
 Util.display = function(num, dec) {
-	switch (Util.displayMode) {
-		case "Normal":
-		{
-			let str = "";
-			let x = Math.floor(num);
-			while (x >= 1) {
-				if (Math.abs(x - num) > 1)
-				{
-					str = "," + str;
-				}
-				if (x >= 1000) {
-					str = Util.puff(x % 1000, 3) + str;
-				}
-				else {
-					str = x % 1000 + str;
-				}
-				x = Math.floor(x / 1000);
-			}
-			if (str === "") {
-				str = "0";
-			}
-			if (dec) {
-				str += "." + Util.puff(Math.floor(num % 1 * 100), 2);
-			}
-			return str;
-		}
-	}
-	return num; // just in case
+	return num.toLocaleString('en-US', {minimumFractionDigits: dec ? 2 : 0});
 };
 
 // roman numerals!
