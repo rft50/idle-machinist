@@ -13,13 +13,21 @@ let MachineShop = {};
 	let upgrades = document.getElementById("machine-upgrades");
 
 	let globRotDisplay = document.getElementById("machine-global-rots");
-	let globMarkupDisplay = document.getElementById("machine-global-Game.markup");
-	let globMarkupButton = document.getElementById("machine-global-Game.markup-button");
+	let globRotWorthDisplay = document.getElementById("machine-global-rots-worth");
+	let globMarkupDisplay = document.getElementById("machine-global-markup");
+	let globMarkupWorthDisplay = document.getElementById("machine-global-markup-worth");
+	let globMarkupButton = document.getElementById("machine-global-markup-button");
+	let globMarkupCostDisplay = document.getElementById("machine-markup-cost");
 
-	let rotDisplay = document.getElementById("machine-rots");
+	let rotsDisplay = document.getElementById("machine-rots");
+	let rotsWorthDisplay = document.getElementById("machine-rots-worth");
 	let lubeDisplay = document.getElementById("machine-lubricate");
+	let lubeFactorDisplay = document.getElementById("machine-lubricate-factor");
+	let lubeCostDisplay = document.getElementById("machine-lubricate-cost");
 	let lubeButton = document.getElementById("machine-lubricate-button");
-	let carveDisplay = document.getElementById("machine-carve");
+	let carvesDisplay = document.getElementById("machine-carves");
+	let capacityDisplay = document.getElementById("machine-capacity");
+	let carveCostDisplay = document.getElementById("machine-carve-cost");
 	let carveButton = document.getElementById("machine-carve-button");
 
 	let refreshGears;
@@ -58,9 +66,11 @@ let MachineShop = {};
 		// replace this with a loop iterating over all gearboxes at some point
 		rots = Game.activeGearbox.rots;
 
-		globRotDisplay.textContent = `You are producing a total of ${trim(rots)} rot/s, worth $${trim(rots*markupVal())} total`;
-		globMarkupDisplay.textContent = `You have marked up the value of rots ${Game.markup} times, so they are worth $${markupVal()} each`;
-		globMarkupButton.textContent = `Markup ($${trim(Scalers.RotCost.getAtLevel(Game.markup))}, +0.25 $/rot)`;
+		globRotDisplay.textContent = trim(rots);
+		globRotWorthDisplay.textContent = "$" + trim(rots*markupVal());
+		globMarkupDisplay.textContent = Game.markup;
+		globMarkupWorthDisplay.textContent = "$" + markupVal();
+		globMarkupCostDisplay.textContent = "$" + trim(Scalers.RotCost.getAtLevel(Game.markup));
 	};
 
 	let recalculate = function() {
@@ -83,16 +93,20 @@ let MachineShop = {};
 			}
 		}
 
-		let lubeMul = Scalers.LubePower.getAtLevel(Game.activeGearbox.upgrades.lubricate);
-		rots *= lubeMul;
+		let lubeFactor = Scalers.LubePower.getAtLevel(Game.activeGearbox.upgrades.lubricate);
+		rots *= lubeFactor;
 
 		Game.activeGearbox.rots = rots;
 		Game.activeGearbox.nextUpdate = nextUpdate;
-		rotDisplay.textContent = `This gearbox is producing ${trim(rots)} rot/s, worth $${trim(rots*markupVal())} total`;
-		lubeDisplay.textContent = `This gearbox has been lubricated ${Game.activeGearbox.upgrades.lubricate} times, so its production is multiplied by ${trim(lubeMul)}`;
-		lubeButton.textContent = `Lubricate ($${trim(Scalers.LubeCost.getAtLevel(Game.activeGearbox.upgrades.lubricate))}, 1.1x)`;
-		carveDisplay.textContent = `This gearbox has been carved ${Game.activeGearbox.upgrades.carve} times, so it can hold ${Game.activeGearbox.baseMax+Game.activeGearbox.upgrades.carve} gears`;
-		carveButton.textContent = `Carve ($${trim(Scalers.CarveCost.getAtLevel(Game.activeGearbox.upgrades.carve))}, +1 gear)`;
+
+		rotsDisplay.textContent = trim(rots);
+		rotsWorthDisplay.textContent = "$" + trim(rots*markupVal());
+		lubeDisplay.textContent = Game.activeGearbox.upgrades.lubricate;
+		lubeFactorDisplay.textContent = trim(lubeFactor);
+		lubeCostDisplay.textContent = "$" + trim(Scalers.LubeCost.getAtLevel(Game.activeGearbox.upgrades.lubricate));
+		carvesDisplay.textContent = Game.activeGearbox.upgrades.carve;
+		capacityDisplay.textContent = Game.activeGearbox.baseMax+Game.activeGearbox.upgrades.carve;
+		carveCostDisplay.textContent = "$" + trim(Scalers.CarveCost.getAtLevel(Game.activeGearbox.upgrades.carve));
 		
 		carveButton.disabled = Game.activeGearbox.baseMax * 2 === gearCap();
 
@@ -105,7 +119,7 @@ let MachineShop = {};
 	let equipGear = function(event) {
 		let idx = -1;
 		for (let i = 0; i < inv.childElementCount; i++) {
-			if (inv.children[i] === event.currentTarget) {
+			if (inv.children[i].contains(event.currentTarget)) {
 				idx = i;
 				break;
 			}
