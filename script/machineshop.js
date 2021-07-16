@@ -1,4 +1,4 @@
-/* global Scalers, Scaler, Util, Game, GearGenerator, Obtainium, TabManager */
+/** @namespace MachineShop */
 let MachineShop = {};
 
 {
@@ -30,24 +30,35 @@ let MachineShop = {};
 	let carveCostDisplay = document.getElementById("machine-carve-cost");
 	let carveButton = document.getElementById("machine-carve-button");
 
+	/** @type {function(): void} */
 	let refreshGears;
 
 	/**
+	 * Convenience method for pretty-printing numbers.
+	 *
+	 * @private
 	 * @param num {number}
 	 * @return {string}
 	 */
 	let trim = function(num) {
-		return Util.display(num, true);
+		return Util.display(num, false);
 	};
 
 	/**
+	 * Determines the current value of rots.
+	 * Its linear nature makes using a Scaler inadvisable.
+	 *
+	 * @private
 	 * @return {number}
 	 */
-	let markupVal = function() {
+	let rotVal = function() {
 		return 1 + Game.markup * 0.25;
 	};
 
 	/**
+	 * Determines the gear cap of the current gearbox.
+	 *
+	 * @private
 	 * @return {number}
 	 */
 	let gearCap = function() {
@@ -55,24 +66,37 @@ let MachineShop = {};
 	};
 
 	/**
+	 * Convenience method to get the current second.
+	 *
+	 * @private
 	 * @return {number}
 	 */
 	let now = function() {
 		return Math.floor(Date.now()/1000);
 	};
 
+	/**
+	 * Recalculates global production, updating the displays.
+	 *
+	 * @private
+	 */
 	let recalculateGlobal = function() {
 		let rots = 0;
 		// replace this with a loop iterating over all gearboxes at some point
 		rots = Game.activeGearbox.rots;
 
 		globRotDisplay.textContent = trim(rots);
-		globRotWorthDisplay.textContent = "$" + trim(rots*markupVal());
+		globRotWorthDisplay.textContent = "$" + trim(rots*rotVal());
 		globMarkupDisplay.textContent = Game.markup;
-		globMarkupWorthDisplay.textContent = "$" + markupVal();
+		globMarkupWorthDisplay.textContent = "$" + rotVal();
 		globMarkupCostDisplay.textContent = "$" + trim(Scalers.RotCost.getAtLevel(Game.markup));
 	};
 
+	/**
+	 * Recalculates the current gearbox, updating displays.
+	 *
+	 * @private
+	 */
 	let recalculate = function() {
 		let rots = 0;
 		let nw = now();
@@ -100,7 +124,7 @@ let MachineShop = {};
 		Game.activeGearbox.nextUpdate = nextUpdate;
 
 		rotsDisplay.textContent = trim(rots);
-		rotsWorthDisplay.textContent = "$" + trim(rots*markupVal());
+		rotsWorthDisplay.textContent = "$" + trim(rots*rotVal());
 		lubeDisplay.textContent = Game.activeGearbox.upgrades.lubricate;
 		lubeFactorDisplay.textContent = trim(lubeFactor);
 		lubeCostDisplay.textContent = "$" + trim(Scalers.LubeCost.getAtLevel(Game.activeGearbox.upgrades.lubricate));
@@ -114,6 +138,9 @@ let MachineShop = {};
 	};
 
 	/**
+	 * Listener applied to gears to equip them.
+	 *
+	 * @private
 	 * @param event {MouseEvent}
 	 */
 	let equipGear = function(event) {
@@ -132,7 +159,10 @@ let MachineShop = {};
 	};
 
 	/**
-	 * @param id
+	 * Generates listeners to apply to gears to unequip them.
+	 *
+	 * @private
+	 * @param id - id to generate removal for
 	 * @return {(function(): void)}
 	 */
 	let unequipGearGenerator = function(id) {
@@ -146,6 +176,11 @@ let MachineShop = {};
 		};
 	};
 
+	/**
+	 * Clears out all the gears in the inventory and gear box.
+	 *
+	 * @private
+	 */
 	let wipeGears = function() {
 		while (inv.hasChildNodes()) {
 			inv.removeChild(inv.childNodes[0]);
@@ -155,6 +190,11 @@ let MachineShop = {};
 		}
 	};
 
+	/**
+	 * Re-renders all gears in the inventory and gear box.
+	 *
+	 * @private
+	 */
 	refreshGears = function() {
 		wipeGears();
 		let id = 1;
@@ -220,6 +260,11 @@ let MachineShop = {};
 	TabManager.addTabOpenedListener(refreshGears, 0, 2);
 	TabManager.addTabClosedListener(wipeGears, 0, 2);
 
+	/**
+	 * Recalculates current gear values, and if in the Machine Shop, re-renders it.
+	 *
+	 * @memberOf MachineShop
+	 */
 	MachineShop.recalculateGears = function() {
 		recalculate();
 		if (TabManager.activeTab[0] === 2) {

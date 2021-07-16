@@ -1,4 +1,3 @@
-/* global materials, Util, MachineShop, Obtainium */
 let Game = {};
 
 // inventories

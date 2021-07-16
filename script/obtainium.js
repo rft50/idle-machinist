@@ -1,10 +1,13 @@
-/* global Game, MachineShop, Scalers */
+/** @namespace Obtainium */
 let Obtainium = {};
 
 Obtainium.upgrades = {};
 {
 	/**
-	 * @param {number} cash
+	 * Determines the amount of obtainium that should be obtained from a given amount of cash.
+	 *
+	 * @private
+	 * @param {number} cash - cash to calculate with
 	 * @return {number}
 	 */
 	const determineObtainiumReward = cash => {
@@ -19,6 +22,11 @@ Obtainium.upgrades = {};
 		return 0;
 	};
 
+	/**
+	 * Updates and displays current obtainium prestige reward.
+	 *
+	 * @memberOf Obtainium
+	 */
 	Obtainium.checkObtainium = () => {
 		let newObtainium = determineObtainiumReward(Game.money);
 		document.getElementById("obtainium-prestige-reward").innerText = newObtainium + " Obtainium";
@@ -27,6 +35,11 @@ Obtainium.upgrades = {};
 		}
 	};
 
+	/**
+	 * Reset Machine Shop and Crafting Room content for Obtainium
+	 *
+	 * @memberOf Obtainium
+	 */
 	Obtainium.prestige = () => {
 		let newObtainium = determineObtainiumReward(Game.money);
 		if (newObtainium > 0) {

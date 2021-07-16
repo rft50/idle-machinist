@@ -1,12 +1,22 @@
-/* global Game, MachineShop, Obtainium, Scalers, materials */
+/** @namespace Options */
 let Options = {};
 Options.autoSave = false;
 
 {
+	/**
+	 * @private
+	 */
 	const updateAutoSaveButton = () => {
 		document.getElementById("auto-save-state").textContent = Options.autoSave ? 'On' : 'Off';
 	};
 
+	/**
+	 * Trims out any references to known materials.
+	 *
+	 * @private
+	 * @param {*} tbl
+	 * @return {*}
+	 */
 	const removeMaterialReferences = tbl => {
 		if (typeof tbl !== "object") {
 			return tbl;
@@ -24,9 +34,19 @@ Options.autoSave = false;
 		return ret;
 	};
 
+	/**
+	 * Reinsert references to known materials
+	 *
+	 * @private
+	 * @param {string} mat
+	 * @return {material}
+	 */
 	const parseMaterial = mat => materials[mat];
 
 	/**
+	 * Parse a gear's stats to the correct types
+	 *
+	 * @private
 	 * @param {Object.<String>} tbl
 	 * @return {*}
 	 */
@@ -41,6 +61,12 @@ Options.autoSave = false;
 		return tbl;
 	};
 
+	/**
+	 * Save the current state of the game
+	 *
+	 * @private
+	 * @return {Object}
+	 */
 	const saveFile = () => {
 		MachineShop.recalculateGears();
 		let file = {};
@@ -65,6 +91,12 @@ Options.autoSave = false;
 		return file;
 	};
 
+	/**
+	 * Load a state from a previously created file
+	 *
+	 * @private
+	 * @param {Object} file
+	 */
 	const loadFile = file => {
 		// inventories
 		Game.money = parseFloat(file.money) || 0;
@@ -123,6 +155,13 @@ Options.autoSave = false;
 		MachineShop.recalculateGears();
 	};
 
+	/**
+	 * Download a file to the client
+	 *
+	 * @private
+	 * @param filename
+	 * @param text - contents
+	 */
 	const download = (filename, text) => {
 		let element = document.createElement('a');
 		element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
@@ -134,14 +173,31 @@ Options.autoSave = false;
 		element.click();
 
 		document.body.removeChild(element);
-	  };
+	};
 
+	/**
+	 * Save the game locally.
+	 *
+	 * @memberOf Options
+	 */
 	Options.save = function() {
 		localStorage.setItem("saveFile", JSON.stringify(saveFile()));
 	};
+
+	/**
+	 * Load the local save game.
+	 *
+	 * @memberOf Options
+	 */
 	Options.load = function() {
 		loadFile(JSON.parse(localStorage.getItem("saveFile") || "{}"));
 	};
+
+	/**
+	 * Toggle automatic saving.
+	 *
+	 * @memberOf Options
+	 */
 	Options.toggleAutoSave = function() {
 		Options.autoSave = !Options.autoSave;
 		updateAutoSaveButton();

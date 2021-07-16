@@ -1,8 +1,12 @@
+/** @namespace Util */
 let Util = {};
 
-// 5 -> 005
-// turn any number into a string of the specified length, padding with 0s on the left
 /**
+ * Left-pad a number with zeroes until the string is the desired length.
+ *
+ * 5 -> 005
+ *
+ * @memberOf Util
  * @param {number} num
  * @param {number} pf
  * @return {string}
@@ -11,21 +15,26 @@ Util.puff = function(num, pf) {
 	return num.padStart(pf, "0");
 };
 
-// 1234.5 -> 1,234.50
-// commas every third number, two decimal places if dec is true
 /**
+ * Format a string with commas.
  *
+ * 1234.5 -> 1,234.50
+ *
+ * @memberOf Util
  * @param num
- * @param dec
+ * @param dec - if decimals are wanted or not
  * @return {string}
  */
 Util.display = function(num, dec) {
 	return num.toLocaleString('en-US', {minimumFractionDigits: dec ? 2 : 0});
 };
 
-// roman numerals!
-// currently only goes up to 5 because it is hardcoded
 /**
+ * Convert a number to roman numerals.
+ *
+ * Currently only implemented to go to 5.
+ *
+ * @memberOf Util
  * @param {number} x
  * @return {string}
  */
@@ -33,9 +42,15 @@ Util.roman = function(x) {
 	return ["I", "II", "III", "IV", "V"][x-1];
 };
 
-// 330 -> 3m 30s
-// turn times into d h m s
 /**
+ * Converts a time into a "d h m s" format.
+ *
+ * 86400 -> 1d
+ * 3600 -> 1h
+ * 60 -> 1m
+ * 1 -> 1s
+ *
+ * @memberOf Util
  * @param {number} t
  * @return {string}
  */
@@ -73,6 +88,11 @@ Util.lifetime = function(t) {
 };
 
 /**
+ * Encapsulate an object with a tooltip.
+ * It should be noted using this method will not return the original Element, if it is given text.
+ * It will, however, .contains() it.
+ *
+ * @memberOf Util
  * @param {Element} obj
  * @param {string} text
  * @return {HTMLElement}

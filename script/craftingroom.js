@@ -1,4 +1,3 @@
-/* global TabManager, Scalers, Scaler, Util, Game, GearGenerator, MaterialGenerator, Obtainium,  materials, voidMaterial */
 {
 	Scalers.PolishCost = new Scaler("PolishCost", 100, 5);
 	Scalers.PolishPower = new Scaler("PolishPower", 1, 2);
@@ -19,6 +18,9 @@
 	let assembleData = [[]];
 
 	/**
+	 * Removes all child nodes of the parent.
+	 *
+	 * @private
 	 * @param {HTMLElement} parent
 	 */
 	const clearChildren = (parent) => {
@@ -27,15 +29,23 @@
 		}
 	};
 
+	/**
+	 * Wipes all parts in the inventory.
+	 *
+	 * @private
+	 */
 	const wipeParts = () => {
 		clearChildren(inv);
 	};
 
 	/**
+	 * Apply an on-click listener and/or wrap with a tooltip, then append to the inventory.
+	 *
+	 * @private
 	 * @param {Element} render
-	 * @param {*} item
-	 * @param {function(MouseEvent, *) : void} [listener]
-	 * @param {function(*) : string} [tip]
+	 * @param {*} item - given to listener and tip
+	 * @param {function(MouseEvent, *) : void} [listener] - fired when clicked
+	 * @param {function(*) : string} [tip] - determines tooltip text
 	 */
 	const appendPart = (render, item, listener, tip) => {
 		if (listener != null) {
@@ -50,6 +60,10 @@
 	};
 
 	/**
+	 * Replace the current inventory display with parts
+	 * May apply listeners or tooltips
+	 *
+	 * @private
 	 * @param {function(MouseEvent, *) : void} [listener]
 	 * @param {function(*) : string} [tip]
 	 */
@@ -75,6 +89,10 @@
 	};
 
 	/**
+	 * Replace the current inventory display with gears
+	 * May apply listeners or tooltips
+	 *
+	 * @private
 	 * @param {function(MouseEvent, *) : void} [listener]
 	 * @param {function(*) : string} [tip]
 	 */
@@ -88,6 +106,13 @@
 		}
 	};
 
+	/**
+	 * Refresh the display in the Assembly room
+	 *
+	 * @private
+	 * @param rim
+	 * @param core
+	 */
 	const setGearAssembleData = (rim, core) => {
 		assembleData[0] = [rim, core];
 		clearChildren(document.getElementById("assembly-gear-rim"));
@@ -111,6 +136,12 @@
 		document.getElementById("assembly-gear-build").disabled = !allData;
 	};
 
+	/**
+	 * Refresh the display in the Polish room
+	 *
+	 * @private
+	 * @param gear
+	 */
 	const setPolishData = gear => {
 		selectedGear = gear;
 		clearChildren(document.getElementById("polish-display"));
@@ -133,6 +164,9 @@
 	};
 
 	/**
+	 * Refresh the display in the Scrap room
+	 *
+	 * @private
 	 * @param [gear]
 	 */
 	const setScrapData = gear => {
@@ -186,12 +220,13 @@
 		}
 	};
 
-	// Finds all items in the part inventory that match the definition,
-	// up to the max count.
-	// Returns an array of indexes, lowest to highest.
 	/**
-	 * @param {{material: [material], type: string}} definition
-	 * @param {number} max
+	 * Find all items in the part inventory that match the definition, up to the max given.
+	 *
+	 * @private
+	 * @param {{material: material, type: string}} definition - definition to check again
+	 * @param {number} max - at most get this many
+	 * @return {number[]} - indexes, lowest to highest
 	 */
 	const findMaterials = (definition, max) => {
 		let indexes = [];
@@ -207,8 +242,13 @@
 		return indexes;
 	};
 
-	// Bulk-removes all indexes specifies.
-	// Removes them highest to lowest index, so as to prevent data corruption.
+	/**
+	 * Removes all given indexes.
+	 * Removes highest-to-lowest, to prevent removal of the wrong things.
+	 *
+	 * @private
+	 * @param indexes - indexes to remove, in any order
+	 */
 	const removeMaterials = indexes => {
 		indexes.sort((a, b) => b - a); // sort highest to lowest
 		for (let idx of indexes) {
@@ -217,10 +257,13 @@
 	};
 
 	/**
-	 * @param {material} material
-	 * @param {HTMLElement} display
-	 * @param {HTMLElement} stats
-	 * @param {HTMLElement[]} buttons
+	 * Arranges the display of a material for places such as the Carpenter's.
+	 *
+	 * @private
+	 * @param {material} material - material to display
+	 * @param {HTMLElement} display - material render display
+	 * @param {HTMLElement} stats - statistics display
+	 * @param {HTMLElement[]} buttons - [buy, rim, core]
 	 */
 	const displayMaterial = (material, display, stats, buttons) => {
 		selectedMaterial = material;
@@ -250,9 +293,12 @@
 	};
 
 	/**
-	 * @param {string} lock
-	 * @param {HTMLElement[]} buttons
-	 * @param {HTMLElement[]} group
+	 * Binds functions to all the buttons in a work station such as the Carpenter's
+	 *
+	 * @private
+	 * @param {string} lock - the material set to exclusively observe
+	 * @param {HTMLElement[]} buttons [buy, rim, core]
+	 * @param {HTMLElement[]} group [display, stats] @see displayMaterial
 	 */
 	const setupButtons = (lock, buttons, group) => {
 		buttons[0].addEventListener("click", function() { // buy button
@@ -371,7 +417,7 @@
 		button.textContent = mat.name;
 		switch (mat.material) {
 			case "wood":
-				button.addEventListener("click", function() {
+				button.addEventListener("click", function() { // jshint ignore:line
 					displayMaterial(mat, carpenterDisplay, carpenterStats, carpenterButtons);
 				});
 				carpenterList.appendChild(button);

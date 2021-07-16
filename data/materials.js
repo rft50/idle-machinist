@@ -17,9 +17,9 @@ Please try to keep this file grouped by material and sorted cheapest to most exp
 /**
  * @typedef material
  * @property {string} name
- * @property {string} material
+ * @property {string} material -- wood, metal, or gem
  * @property {number} cost
- * @property {number[]} color
+ * @property {[number, number, number, ?number]} color - r g b [a]
  * @property {gearData} gear
  */
 
