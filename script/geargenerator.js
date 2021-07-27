@@ -5,20 +5,20 @@ const GearGenerator = {};
  * Convenience function to render a gear.
  *
  * @memberOf GearGenerator
- * @param {*} gear - to parse data from
+ * @param {Gear} gear - to parse data from
  * @param {number|string} id - should be unique
  * @return {SVGSVGElement}
  */
 GearGenerator.render = function(gear, id) {
-	return GearGenerator.generate(gear.primary, gear.secondary, id, gear.polish, gear.lifetime === 0);
+	return GearGenerator.generate(gear.rim, gear.core, id, gear.polish, gear.life === 0);
 };
 
 /**
  * Takes in data about a gear to create, and generates an SVG representing it.
  *
  * @memberOf GearGenerator
- * @param {material} prim - core
- * @param {material} sec - rim
+ * @param {material} prim - rim
+ * @param {material} sec - core
  * @param {number|string} id - should be unique
  * @param {number} [polish=0] - white sheen
  * @param {boolean} [broken=false] - cracks

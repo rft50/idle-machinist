@@ -21,11 +21,11 @@ Util.puff = function(num, pf) {
  * 1234.5 -> 1,234.50
  *
  * @memberOf Util
- * @param num
- * @param dec - if decimals are wanted or not
+ * @param {number} num
+ * @param {boolean} dec=false - if decimals are wanted or not
  * @return {string}
  */
-Util.display = function(num, dec) {
+Util.display = function(num, dec = false) {
 	return num.toLocaleString('en-US', {minimumFractionDigits: dec ? 2 : 0});
 };
 
@@ -54,7 +54,8 @@ Util.roman = function(x) {
  * @param {number} t
  * @return {string}
  */
-Util.lifetime = function(t) {
+Util.toTime = function(t) {
+	t = Math.floor(t);
 	if (t === 0)
 	{
 		return "0s";
@@ -106,6 +107,32 @@ Util.tip = function(obj, text) {
 	const tip = document.createElement("span");
 	tip.classList.add("tooltiptext");
 	tip.innerHTML = text;
+	div.appendChild(obj);
+	div.appendChild(tip);
+	return div;
+};
+
+/**
+ * Encapsulate an object with a tooltip that updates on hover.
+ *
+ * @memberOf Util
+ * @param {Element} obj
+ * @param {Gear} data
+ * @param {function(Gear) : string} func
+ * @return {HTMLElement}
+ */
+Util.liveTip = function(obj, data, func) {
+	if (func == null) {
+		return obj;
+	}
+	const div = document.createElement("div");
+	div.classList.add("tooltip");
+	const tip = document.createElement("span");
+	tip.classList.add("tooltiptext");
+	obj.addEventListener("mouseover", function() {
+		tip.innerHTML = func(data);
+	});
+	tip.innerHTML = func(data);
 	div.appendChild(obj);
 	div.appendChild(tip);
 	return div;

@@ -2,13 +2,7 @@ let Game = {};
 
 // inventories
 Game.gearInventory = [
-	{
-		primary: materials.Oak,
-		secondary: materials.Oak,
-		rots: 1,
-		effect: ["persistent", 1],
-		lifetime: 1200
-	}
+	new Gear(materials.Oak, materials.Oak)
 ];
 Game.partInventory = [
 	{
@@ -105,11 +99,9 @@ Game.markup = 0;
 }
 
 window.setInterval(function() {
-	let rots = Game.activeGearbox.rots;
+	let rots = MachineShop.tickGears(true) || 0;
 	let cashMul = 1 + Game.markup / 4;
 	Game.gainMoney(rots * cashMul);
 	Obtainium.checkObtainium();
-	if (Date.now()/1000 >= Game.activeGearbox.nextUpdate) {
-		MachineShop.recalculateGears();
-	}
+	CraftingRoom.tickMender();
 }, 1000);

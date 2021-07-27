@@ -18,20 +18,33 @@ Options.autoSave = false;
 	 * @return {*}
 	 */
 	const removeMaterialReferences = tbl => {
-		if (typeof tbl !== "object") {
-			return tbl;
-		}
-		let ret = {};
-		for (let idx in tbl) {
-			let val = tbl[idx];
-			if (val.name != null) {
-				ret[idx] = val.name;
+		if (Array.isArray(tbl)) {
+			let ret = [];
+			for (let idx in tbl) {
+				let val = tbl[idx];
+				if (typeof val === "object" && val.name != null) {
+					ret[idx] = val.name;
+				}
+				else {
+					ret[idx] = removeMaterialReferences(val);
+				}
 			}
-			else {
-				ret[idx] = removeMaterialReferences(val);
-			}
+			return ret;
 		}
-		return ret;
+		else if (typeof tbl === "object") {
+			let ret = {};
+			for (let idx in tbl) {
+				let val = tbl[idx];
+				if (typeof val === "object" && val.name != null) {
+					ret[idx] = val.name;
+				}
+				else {
+					ret[idx] = removeMaterialReferences(val);
+				}
+			}
+			return ret;
+		}
+		return tbl;
 	};
 
 	/**
@@ -51,14 +64,13 @@ Options.autoSave = false;
 	 * @return {*}
 	 */
 	const refreshGear = tbl => {
-		tbl.rots = parseInt(tbl.rots);
-		tbl.lifetime = parseInt(tbl.lifetime);
-		tbl.effect[1] = parseInt(tbl.effect[1]);
+		let gear = new Gear(parseMaterial(tbl.rim), parseMaterial(tbl.core));
 
-		tbl.primary = parseMaterial(tbl.primary);
-		tbl.secondary = parseMaterial(tbl.secondary);
+		gear.life = tbl.life;
+		gear.polish = tbl.polish;
+		gear.mendTime = tbl.mendTime;
 
-		return tbl;
+		return gear;
 	};
 
 	/**
@@ -68,7 +80,6 @@ Options.autoSave = false;
 	 * @return {Object}
 	 */
 	const saveFile = () => {
-		MachineShop.recalculateGears();
 		let file = {};
 
 		// inventories
@@ -82,6 +93,12 @@ Options.autoSave = false;
 		// obtainium
 		file.obtainium = Game.obtainium;
 		file.obtainiumUpgrades = Obtainium.upgrades;
+
+		// mending machine
+		file.menderCapacity = CraftingRoom.menderCapacity;
+		file.menderObtainiumUpgrades = CraftingRoom.menderObtainiumUpgrades;
+		file.menderTimeUpgrades = CraftingRoom.menderTimeUpgrades;
+		file.menderGears = removeMaterialReferences(CraftingRoom.menderGear);
 
 		// misc
 		file.activeGearbox = removeMaterialReferences(Game.activeGearbox);
@@ -123,12 +140,24 @@ Options.autoSave = false;
 		document.getElementById("persistence-boost").className = Obtainium.upgrades.persistence ? "obtainium purchased" : "obtainium";
 		document.getElementById("scrap-boost").className = Obtainium.upgrades.scrap ? "obtainium purchased" : "obtainium";
 
-		let hasObtainium = Game.obtainium > 0 || Obtainium.upgrades !== {};
-		document.getElementById("obtainium-prestige").hidden = hasObtainium;
-		document.getElementById("obtainium-display").hidden = hasObtainium;
-		document.getElementById("obtainium-tab").hidden = hasObtainium;
+		let hasObtainium = Game.obtainium > 0 || Object.keys(Obtainium.upgrades).length !== 0;
+		document.getElementById("obtainium-prestige").hidden = !hasObtainium;
+		document.getElementById("obtainium-display").hidden = !hasObtainium;
+		document.getElementById("obtainium-tab").hidden = !hasObtainium;
 
 		Game.gainObtainium(0);
+
+		// mending machine
+		CraftingRoom.menderCapacity = file.menderCapacity || 1;
+		CraftingRoom.menderObtainiumUpgrades = file.menderObtainiumUpgrades || 0;
+		CraftingRoom.menderTimeUpgrades = file.menderTimeUpgrades || 0;
+		CraftingRoom.menderGears = [];
+		if (file.menderGears != null) {
+			for (let i = 0; i < file.menderGears.length; i++) {
+				let fg = file.menderGears[i];
+				CraftingRoom.menderGears.push(refreshGear(fg));
+			}
+		}
 
 		// misc
 		file.activeGearbox = file.activeGearbox || {};
@@ -151,8 +180,6 @@ Options.autoSave = false;
 
 		Options.autoSave = file.autoSave || false; // Default to false if null
 		updateAutoSaveButton();
-
-		MachineShop.recalculateGears();
 	};
 
 	/**

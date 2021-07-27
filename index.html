@@ -10,6 +10,7 @@
 		<!-- scripts! all of the scripts! -->
 		<script src="script/util.js" defer></script>
 		<script src="script/scaler.js" defer></script>
+		<script src="script/gear.js" defer></script>
 		<script src="script/geargenerator.js" defer></script>
 		<script src="script/materialgenerator.js" defer></script>
 		<script src="script/tabmanager.js" defer></script>
@@ -91,7 +92,8 @@
 				<button id="assembly-tab-button" onclick="TabManager.switchTab(1, 0)">Assembly Room</button>
 				<button onclick="TabManager.switchTab(1, 1)">Polishing Shop</button>
 				<button onclick="TabManager.switchTab(1, 2)">Scrap Heap</button>
-				<button onclick="TabManager.switchTab(1, 3)">Carpenter's Shop</button>
+				<button id="mending-machine-button" onclick="TabManager.switchTab(1, 3)" class="obtainium">Mending Machine</button>
+				<button onclick="TabManager.switchTab(1, 4)">Carpenter's Shop</button>
 			</div>
 			<div class="flex-grid">
 				<div id="craft-inv" class="column">
@@ -148,6 +150,34 @@
 					</div>
 				</div>
 				<div id="Tab1_3" class="column">
+					<div>
+						<button id="mending-capacity-button" class="obtainium">
+							Capacity
+							<br>
+							Currently <span id="mending-capacity-qnt">1</span>
+							<br>
+							Cost: <span id="mending-capacity-cost">10</span> Obtainium to +1
+						</button>
+						<button id="mending-speed-button" class="obtainium">
+							Obtainium Boost
+							<br>
+							Currently Obtainium<sup id="mending-speed-qnt">0</sup>
+							<br>
+							Cost: <span id="mending-speed-cost">10</span> Obtainium to ^0.2
+						</button>
+						<button id="mending-time-button" class="obtainium">
+							Time Boost
+							<br>
+							Currently t<sup id="mending-time-qnt">0</sup>
+							<br>
+							Cost: <span id="mending-time-cost">10</span> Obtainium to ^0.05
+						</button>
+					</div>
+					<div id="mending-inv">
+
+					</div>
+				</div>
+				<div id="Tab1_4" class="column">
 					<div class="flex-grid">
 						<div id="carpenter-stats" class="column">
 							Material: ???

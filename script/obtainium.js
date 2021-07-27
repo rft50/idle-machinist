@@ -58,12 +58,14 @@ Obtainium.upgrades = {};
 				nextUpdate: Infinity
 			};
 			Game.markup = 0;
-			
+
+			CraftingRoom.menderGear = [];
 
 			Game.gainObtainium(newObtainium);
-			MachineShop.recalculateGears();
+			MachineShop.tickGears();
 			document.getElementById("obtainium-display").hidden = false;
 			document.getElementById("obtainium-tab").hidden = false;
+			document.getElementById("obtainium-tab").click();
 			Game.money = 30;
 		}
 	};
@@ -74,7 +76,7 @@ Obtainium.upgrades = {};
 				Obtainium.upgrades.lubricate = true;
 				Scalers.LubeCost.setBaseModifier("cheaper-lubrication", 0.5);
 				document.getElementById("cheaper-lubrication").classList.add("purchased");
-				MachineShop.recalculateGears();
+				MachineShop.tickGears();
 			}
 		}
 	});

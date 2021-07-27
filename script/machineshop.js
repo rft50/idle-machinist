@@ -95,24 +95,22 @@ let MachineShop = {};
 	/**
 	 * Recalculates the current gearbox, updating displays.
 	 *
+	 * @param {boolean} damaging=false - if gears get damaged during this calculation
+	 * @return {number} - rots produced this tick
 	 * @private
 	 */
-	let recalculate = function() {
+	let recalculate = function(damaging=false) {
 		let rots = 0;
-		let nw = now();
-		let nextUpdate = Infinity;
 		for (let gear of Game.activeGearbox.gears) {
-			gear.lifetime = Math.max(gear.placed + gear.lifetime - nw, 0);
-			gear.placed = nw;
-			if (gear.lifetime > 0) {
-				rots += gear.rots;
-				if (gear.lifetime + nw < nextUpdate) {
-					nextUpdate = gear.lifetime + nw;
-				}
+			if (damaging && gear.life > 0) {
+				gear.life -= 1;
+			}
+			if (gear.life > 0) {
+				rots += gear.getRots();
 			}
 			else {
 				if (gear.effect[0] === "persistent") {
-					rots += gear.rots * (gear.effect[1]/10) * (Obtainium.upgrades.persistence ? 1.5 : 1);
+					rots += gear.getRots() * (gear.effect[1]/10) * (Obtainium.upgrades.persistence ? 1.5 : 1);
 				}
 			}
 		}
@@ -121,7 +119,6 @@ let MachineShop = {};
 		rots *= lubeFactor;
 
 		Game.activeGearbox.rots = rots;
-		Game.activeGearbox.nextUpdate = nextUpdate;
 
 		rotsDisplay.textContent = trim(rots);
 		rotsWorthDisplay.textContent = "$" + trim(rots*rotVal());
@@ -131,10 +128,10 @@ let MachineShop = {};
 		carvesDisplay.textContent = Game.activeGearbox.upgrades.carve;
 		capacityDisplay.textContent = Game.activeGearbox.baseMax+Game.activeGearbox.upgrades.carve;
 		carveCostDisplay.textContent = "$" + trim(Scalers.CarveCost.getAtLevel(Game.activeGearbox.upgrades.carve));
-		
 		carveButton.disabled = Game.activeGearbox.baseMax * 2 === gearCap();
 
 		recalculateGlobal();
+		return rots;
 	};
 
 	/**
@@ -168,7 +165,6 @@ let MachineShop = {};
 	let unequipGearGenerator = function(id) {
 		return function() {
 			let gear = Game.activeGearbox.gears.splice(id, 1)[0];
-			gear.lifetime = Math.max(gear.placed + gear.lifetime - now(), 0);
 			delete gear.placed;
 			Game.gearInventory.push(gear);
 			refreshGears();
@@ -200,8 +196,8 @@ let MachineShop = {};
 		let id = 1;
 		let addEquip = Game.activeGearbox.gears.length < gearCap();
 		let tip = function(gear) {
-			return `${gear.rots} rots<br>
-			${gear.lifetime === 0 ? "Broken" : Util.lifetime(gear.lifetime)}<br>
+			return `${gear.getRots()} rots<br>
+			${gear.life > 0 ? Util.toTime(gear.life) : "Broken"}<br>
 			${gear.effect[0]} ${Util.roman(gear.effect[1])}`;
 		};
 		for (let gear of Game.gearInventory) {
@@ -218,7 +214,7 @@ let MachineShop = {};
 			if (Game.activeGearbox.gears[i] != null) {
 				render = GearGenerator.render(Game.activeGearbox.gears[i], id);
 				render.addEventListener("click", unequipGearGenerator(i));
-				render = Util.tip(render, tip(Game.activeGearbox.gears[i]));
+				render = Util.liveTip(render, Game.activeGearbox.gears[i], tip);
 				id++;
 			} else {
 				render = document.createElement("img");
@@ -263,12 +259,11 @@ let MachineShop = {};
 	/**
 	 * Recalculates current gear values, and if in the Machine Shop, re-renders it.
 	 *
+	 * @param {boolean} damaging=false - if gears get damaged during this calculation
+	 * @return {number} rots produced this tick
 	 * @memberOf MachineShop
 	 */
-	MachineShop.recalculateGears = function() {
-		recalculate();
-		if (TabManager.activeTab[0] === 2) {
-			refreshGears();
-		}
+	MachineShop.tickGears = function(damaging=false) {
+		return recalculate(damaging);
 	};
 }

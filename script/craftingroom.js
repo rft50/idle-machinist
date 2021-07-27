@@ -1,6 +1,12 @@
+/** @namespace CraftingRoom */
+let CraftingRoom = {};
+
 {
 	Scalers.PolishCost = new Scaler("PolishCost", 100, 5);
 	Scalers.PolishPower = new Scaler("PolishPower", 1, 2);
+	Scalers.MenderCapacityCost = new Scaler("MenderCapacityCost", 10, 4);
+	Scalers.MenderObtainiumCost = new Scaler("MenderObtainiumCost", 10, 6);
+	Scalers.MenderTimeCost = new Scaler("MenderTimeCost", 10, 8);
 	
 	const inv = document.getElementById("craft-inv");
 	const carpenterStats = document.getElementById("carpenter-stats");
@@ -16,6 +22,14 @@
 	let selectedGear = null;
 	let scrapData = [];
 	let assembleData = [[]];
+
+	/** @type {Gear[]} */
+	CraftingRoom.menderGear = [];
+	CraftingRoom.menderCapacity = 1;
+	CraftingRoom.menderObtainiumUpgrades = 0;
+	CraftingRoom.menderTimeUpgrades = 0;
+
+	let refreshMenderButtons;
 
 	/**
 	 * Removes all child nodes of the parent.
@@ -54,7 +68,7 @@
 			});
 		}
 		if (tip != null) {
-			render = Util.tip(render, tip(item));
+			render = Util.liveTip(render, item, tip);
 		}
 		inv.appendChild(render);
 	};
@@ -128,7 +142,7 @@
 		let lifetime = (rim != null ? rim.gear.duration : 0) + (core != null ? core.gear.coreBonus : 0);
 		let allData = rim != null && core != null;
 		let strData = [ // I'm sure this can be made better
-			`Lifespan: ${Util.lifetime(lifetime) + (allData ? "" : "?")}`,
+			`Lifespan: ${Util.toTime(lifetime) + (allData ? "" : "?")}`,
 			`Speed: ${rim != null ? Util.display(rim.gear.speed) : "???"}`,
 			`Effect: ${core != null ? core.gear.effect[0] + " " + Util.roman(core.gear.effect[1]) : "???"}`
 		];
@@ -154,9 +168,9 @@
 		let render = GearGenerator.render(gear, "POLISH");
 		document.getElementById("polish-display").appendChild(render);
 		let strData = [
-			`Base Speed: ${Util.display(gear.primary.gear.speed)}`,
+			`Base Speed: ${Util.display(gear.getRots())}`,
 			`Polish Count: ${polish}`,
-			`Adjusted Speed: ${Util.display(gear.primary.gear.speed*Scalers.PolishPower.getAtLevel(polish), true)}`
+			`Total Polish Multiplier: ${Util.display(Scalers.PolishPower.getAtLevel(polish))}`
 		];
 		document.getElementById("polish-data").innerHTML = strData.join("<br>");
 		document.getElementById("polish-button").textContent = `Polish ($${Util.display(Scalers.PolishCost.getAtLevel(polish), true)})`;
@@ -178,7 +192,7 @@
 			scrapData = null;
 			return;
 		}
-		let broken = gear.lifetime === 0;
+		let broken = gear.life === 0;
 		let loot = [];
 		let probs = [
 			0.75, // high
@@ -195,15 +209,15 @@
 			probs[1] *= 1.201;
 			probs[2] *= 1.201;
 		}
-		switch (gear.primary.material) {
+		switch (gear.rim.material) {
 			case "wood":
-				loot.push([gear.primary, probs[0]]);
-				loot.push([gear.primary, probs[2]]);
+				loot.push([gear.rim, probs[0]]);
+				loot.push([gear.rim, probs[2]]);
 				break;
 		}
-		switch (gear.secondary.material) {
+		switch (gear.core.material) {
 			case "wood":
-				loot.push([gear.secondary, probs[1]]);
+				loot.push([gear.core, probs[1]]);
 				break;
 		}
 		scrapData = loot;
@@ -218,6 +232,109 @@
 			div.appendChild(p);
 			document.getElementById("scrap-loot-display").appendChild(div);
 		}
+	};
+
+
+	/**
+	 * @private
+	 * @param {Gear} gear
+	 * @return {number}
+	 */
+	const menderTimeLeft = gear => {
+		let mendTime = gear.mendTime || 0;
+		let timeLeft = gear.maxLife - gear.life + mendTime;
+		let obtainiumFactor = Math.max(1, Math.pow(Game.obtainium, CraftingRoom.menderObtainiumUpgrades * 0.2));
+		let timeFactor = 1 + CraftingRoom.menderTimeUpgrades * 0.05;
+
+		return Math.pow(timeLeft * timeFactor / obtainiumFactor, 1 / timeFactor) - Math.pow(mendTime * timeFactor / obtainiumFactor, 1 / timeFactor);
+	};
+
+	/**
+	 * @private
+	 * @param {Gear} gear
+	 * @return {string}
+	 */
+	const menderTip = gear => {
+		return [
+			'<pre>[' + '#'.repeat(10*gear.life/gear.maxLife).padEnd(10, ' ') + ']</pre>',
+			`max: ${Util.toTime(gear.maxLife)}`,
+			`cur: ${Util.toTime(gear.life)}`,
+			`done: ${Util.toTime(menderTimeLeft(gear))}`
+		].join("<br>");
+	};
+
+	/**
+	 * @private
+	 */
+	const refreshMender = () => {
+		let inv = document.getElementById("mending-inv");
+		clearChildren(inv);
+		for (let i = 0; i < CraftingRoom.menderCapacity; i++) {
+			let render;
+			if (CraftingRoom.menderGear[i] != null) {
+				render = GearGenerator.render(CraftingRoom.menderGear[i], i);
+				render.addEventListener("click", function(e) {
+					let idx = -1;
+					for (let i = 0; i < CraftingRoom.menderGear.length; i++) {
+						if (inv.children[0].contains(e.currentTarget)) {
+							idx = i;
+							break;
+						}
+					}
+					let gear = CraftingRoom.menderGear.splice(idx, 1)[0];
+					Game.gearInventory.push(gear);
+					document.getElementById("mending-machine-button").click();
+				});
+				render = Util.liveTip(render, CraftingRoom.menderGear[i], menderTip);
+			}
+			else {
+				render = document.createElement("img");
+				render.setAttribute("src", "fakegear.svg");
+			}
+			inv.appendChild(render);
+		}
+	};
+
+	/**
+	 * Ticks the mender through one second of calculation.
+	 *
+	 * @memberOf CraftingRoom
+	 */
+	CraftingRoom.tickMender = () => {
+		let refresh = false;
+		for (let gear of CraftingRoom.menderGear) {
+			gear.mendTime++;
+			gear.life += Math.max(1, Math.pow(Game.obtainium, CraftingRoom.menderObtainiumUpgrades * 0.2) * Math.pow(gear.mendTime, CraftingRoom.menderTimeUpgrades * 0.05));
+
+			if (gear.life >= gear.maxLife) {
+				gear.life = gear.maxLife;
+				CraftingRoom.menderGear.splice(CraftingRoom.menderGear.indexOf(gear), 1);
+				Game.gearInventory.push(gear);
+				refresh = true;
+			}
+		}
+
+		if (refresh && TabManager.activeTab[1] === 3) {
+			document.getElementById("mending-machine-button").click();
+		}
+
+		refreshMenderButtons();
+	};
+
+	/**
+	 * Refreshes all of the buttons in the Mending Machine.
+	 *
+	 * @private
+	 */
+	refreshMenderButtons = () => {
+		document.getElementById("mending-capacity-qnt").innerText = CraftingRoom.menderCapacity;
+		document.getElementById("mending-capacity-cost").innerText = Scalers.MenderCapacityCost.getAtLevel(CraftingRoom.menderCapacity-1);
+
+		document.getElementById("mending-speed-qnt").innerText = CraftingRoom.menderObtainiumUpgrades * 0.2;
+		document.getElementById("mending-speed-cost").innerText = Scalers.MenderObtainiumCost.getAtLevel(CraftingRoom.menderObtainiumUpgrades);
+
+		document.getElementById("mending-time-qnt").innerText = CraftingRoom.menderTimeUpgrades * 0.05;
+		document.getElementById("mending-time-cost").innerText = Scalers.MenderTimeCost.getAtLevel(CraftingRoom.menderTimeUpgrades);
 	};
 
 	/**
@@ -273,9 +390,9 @@
 		let statData = [
 			`Material: ${material.name} Wood`,
 			"", // intentionally blank as a divider
-			`Rim Lifespan: ${Util.lifetime(material.gear.duration)}`,
+			`Rim Lifespan: ${Util.toTime(material.gear.duration)}`,
 			`Rim Speed: ${Util.display(material.gear.speed)}`,
-			`Core Lifespan: ${Util.lifetime(material.gear.coreBonus)}`,
+			`Core Lifespan: ${Util.toTime(material.gear.coreBonus)}`,
 			`Core Effect: ${material.gear.effect[0]} ${Util.roman(material.gear.effect[1])}`
 		];
 		stats.innerHTML = statData.join("<br>");
@@ -368,9 +485,9 @@
 		}, function(part) {
 			switch (part.type) {
 				case "gear-rim":
-					return Util.display(part.material.gear.speed) + " rots<br>" + Util.lifetime(part.material.gear.duration);
+					return Util.display(part.material.gear.speed) + " rots<br>" + Util.toTime(part.material.gear.duration);
 				case "gear-core":
-					return part.material.gear.effect[0] + " " + Util.roman(part.material.gear.effect[1]) + "<br>" + Util.lifetime(part.material.gear.coreBonus);
+					return part.material.gear.effect[0] + " " + Util.roman(part.material.gear.effect[1]) + "<br>" + Util.toTime(part.material.gear.coreBonus);
 			}
 		});
 	}, 1, 0);
@@ -402,14 +519,31 @@
 		setScrapData(null);
 	}, 1, 2);
 
+	// Mending Machine
+	TabManager.addTabOpenedListener(function() {
+		refreshPartsAsGears(function(e, gear) {
+			if (CraftingRoom.menderGear.length < CraftingRoom.menderCapacity) {
+				let idx = Game.gearInventory.indexOf(gear);
+				Game.gearInventory.splice(idx, 1);
+				gear.mendTime = 0;
+				CraftingRoom.menderGear.push(gear);
+				document.getElementById("mending-machine-button").click();
+			}
+		}, menderTip);
+		refreshMender();
+	}, 1, 3);
+	TabManager.addTabClosedListener(function() {
+		clearChildren(document.getElementById("mending-inv"));
+	}, 1, 3);
+
 	// Carpenter's Shop Listeners
 	TabManager.addTabOpenedListener(function() {
 		displayMaterial(materials.Oak, carpenterDisplay, carpenterStats, carpenterButtons);
 		refreshParts();
-	}, 1, 3);
+	}, 1, 4);
 	TabManager.addTabClosedListener(function() {
 		clearChildren(carpenterDisplay);
-	}, 1, 3);
+	}, 1, 4);
 
 	// list setups
 	for (let mat of Object.values(materials)) {
@@ -441,13 +575,7 @@
 			}, 1)[0];
 			if (rimPart != null && corePart != null) {
 				removeMaterials([rimPart, corePart]);
-				Game.gearInventory.push({
-					primary: rim,
-					secondary: core,
-					rots: rim.gear.speed,
-					effect: core.gear.effect,
-					lifetime: rim.gear.duration + core.gear.coreBonus
-				});
+				Game.gearInventory.push(new Gear(rim, core));
 				document.getElementById("assembly-tab-button").click();
 			}
 		}
@@ -456,11 +584,10 @@
 	document.getElementById("polish-button").addEventListener("click", function() {
 		if (selectedGear != null) {
 			let polish = selectedGear.polish || 0;
-			let cost = 100 * Math.pow(5, polish);
+			let cost = Scalers.PolishCost.getAtLevel(selectedGear.polish);
 			if (Game.trySpendMoney(cost)) {
 				polish++;
 				selectedGear.polish = polish;
-				selectedGear.rots = selectedGear.primary.gear.speed * Math.pow(2, polish);
 				setPolishData(selectedGear);
 				refreshPartsAsGears(function(e, gear) {
 					setPolishData(gear);
@@ -490,5 +617,26 @@
 				setScrapData(null);
 			}
 		}
+	});
+
+	document.getElementById("mending-capacity-button").addEventListener("click", function() {
+		if (Game.trySpendObtainium(Scalers.MenderCapacityCost.getAtLevel(CraftingRoom.menderCapacity-1))) {
+			CraftingRoom.menderCapacity++;
+		}
+		refreshMender();
+	});
+
+	document.getElementById("mending-speed-button").addEventListener("click", function() {
+		if (Game.trySpendObtainium(Scalers.MenderObtainiumCost.getAtLevel(CraftingRoom.menderObtainiumUpgrades))) {
+			CraftingRoom.menderObtainiumUpgrades++;
+		}
+		refreshMenderButtons();
+	});
+
+	document.getElementById("mending-time-button").addEventListener("click", function() {
+		if (Game.trySpendObtainium(Scalers.MenderTimeCost.getAtLevel(CraftingRoom.menderTimeUpgrades))) {
+			CraftingRoom.menderTimeUpgrades++;
+		}
+		refreshMenderButtons();
 	});
 }
