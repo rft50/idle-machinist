@@ -18,6 +18,7 @@ let CraftingRoom = {};
 		document.getElementById("carpenter-gear-core")
 	];
 
+	/** @type {material} */
 	let selectedMaterial = null;
 	let selectedGear = null;
 	let scrapData = [];
@@ -404,7 +405,12 @@ let CraftingRoom = {};
 			}
 		}
 
-		buttons[0].textContent = `Buy ($${material.cost})`;
+		let cost = material.cost;
+		if (material.material === "wood" && Obtainium.upgrades.woodHaggling) {
+			cost /= 1 + Game.obtainium;
+		}
+
+		buttons[0].textContent = `Buy ($${Util.display(cost)})`;
 		buttons[1].disabled = matCount < 2;
 		buttons[2].disabled = matCount < 1;
 	};
@@ -420,7 +426,11 @@ let CraftingRoom = {};
 	const setupButtons = (lock, buttons, group) => {
 		buttons[0].addEventListener("click", function() { // buy button
 			let mat = selectedMaterial;
-			if (Game.trySpendMoney(mat.cost)) {
+			let cost = mat.cost;
+			if (lock === "wood" && Obtainium.upgrades.woodHaggling) {
+				cost /= 1 + Game.obtainium;
+			}
+			if (Game.trySpendMoney(cost)) {
 				Game.partInventory.push({
 					type: "raw",
 					material: mat

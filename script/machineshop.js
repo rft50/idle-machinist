@@ -3,7 +3,6 @@ let MachineShop = {};
 
 {
 	Scalers.MarkupCost = new Scaler("MarkupCost", 1000, 10);
-	Scalers.RotCost = new Scaler("RotCost", 1000, 10);
 	Scalers.LubeCost = new Scaler("LubeCost", 100, 1.5);
 	Scalers.LubePower = new Scaler("LubePower", 1, 1.1);
 	Scalers.CarveCost = new Scaler("CarveCost", 1000, 5);
@@ -89,7 +88,7 @@ let MachineShop = {};
 		globRotWorthDisplay.textContent = "$" + trim(rots*rotVal());
 		globMarkupDisplay.textContent = Game.markup;
 		globMarkupWorthDisplay.textContent = "$" + rotVal();
-		globMarkupCostDisplay.textContent = "$" + trim(Scalers.RotCost.getAtLevel(Game.markup));
+		globMarkupCostDisplay.textContent = "$" + trim(Scalers.MarkupCost.getAtLevel(Game.markup));
 	};
 
 	/**

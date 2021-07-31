@@ -139,6 +139,11 @@ Options.autoSave = false;
 		document.getElementById("cheaper-lubrication").className = Obtainium.upgrades.lubricate ? "obtainium purchased" : "obtainium";
 		document.getElementById("persistence-boost").className = Obtainium.upgrades.persistence ? "obtainium purchased" : "obtainium";
 		document.getElementById("scrap-boost").className = Obtainium.upgrades.scrap ? "obtainium purchased" : "obtainium";
+		document.getElementById("wood-haggling").className = Obtainium.upgrades.woodHaggling ? "obtainium purchased" : "obtainium";
+		Scalers.MarkupCost.setMultiplierModifier("obtainiumMarkup", -1);
+		document.getElementById("obtainium-markup").className = Obtainium.upgrades.markup ? "obtainium purchased" : "obtainium";
+		document.getElementById("mending-machine-button").hidden = false;
+		document.getElementById("mending-machine-unlock").className = Obtainium.upgrades.menderUnlock ? "obtainium purchased" : "obtainium";
 
 		let hasObtainium = Game.obtainium > 0 || Object.keys(Obtainium.upgrades).length !== 0;
 		document.getElementById("obtainium-prestige").hidden = !hasObtainium;

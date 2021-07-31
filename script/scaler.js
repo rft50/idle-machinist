@@ -38,7 +38,7 @@ class Scaler {
 	 * @param {string|number} id
 	 * @param {number} effect
 	 */
-	setMultiplierModifiers(id, effect) {
+	setMultiplierModifier(id, effect) {
 		if (effect === 0) {
 			delete this.multiplierModifiers[id];
 		}

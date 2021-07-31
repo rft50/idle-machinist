@@ -92,7 +92,7 @@
 				<button id="assembly-tab-button" onclick="TabManager.switchTab(1, 0)">Assembly Room</button>
 				<button onclick="TabManager.switchTab(1, 1)">Polishing Shop</button>
 				<button onclick="TabManager.switchTab(1, 2)">Scrap Heap</button>
-				<button id="mending-machine-button" onclick="TabManager.switchTab(1, 3)" class="obtainium">Mending Machine</button>
+				<button id="mending-machine-button" onclick="TabManager.switchTab(1, 3)" class="obtainium" hidden>Mending Machine</button>
 				<button onclick="TabManager.switchTab(1, 4)">Carpenter's Shop</button>
 			</div>
 			<div class="flex-grid">
@@ -209,9 +209,16 @@
 			</div>
 		</div>
 		<div id="Tab0_4">
-			<button id="cheaper-lubrication" class="obtainium">Lubrication Base Price is 50<br>1 Obtainium</button>
-			<button id="persistence-boost" class="obtainium">Persistence is 50% stronger<br>1 Obtainium</button>
-			<button id="scrap-boost" class="obtainium">Scrapping is 20% more effective<br>1 Obtainium</button>
+			<div>
+				<button id="cheaper-lubrication" class="obtainium">Lubrication Base Price is 50<br>1 Obtainium</button>
+				<button id="persistence-boost" class="obtainium">Persistence is 50% stronger<br>1 Obtainium</button>
+				<button id="scrap-boost" class="obtainium">Scrapping is 20% more effective<br>1 Obtainium</button>
+			</div>
+			<div>
+				<button id="wood-haggling" class="obtainium">Wood is cheaper based on Obtainium<br>5 Obtainium</button>
+				<button id="obtainium-markup" class="obtainium">Markups are cheaper<br>15 Obtainium</button>
+				<button id="mending-machine-unlock" class="obtainium">Unlock the Mending Machine<br>30 Obtainium</button>
+			</div>
 		</div>
 	</body>
 </html>

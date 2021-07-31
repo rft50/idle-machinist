@@ -98,4 +98,33 @@ Obtainium.upgrades = {};
 			}
 		}
 	});
+
+	document.getElementById("wood-haggling").addEventListener("click", function() {
+		if (!Obtainium.upgrades.woodHaggling) {
+			if (Game.trySpendObtainium(5)) {
+				Obtainium.upgrades.woodHaggling = true;
+				document.getElementById("wood-haggling").classList.add("purchased");
+			}
+		}
+	});
+
+	document.getElementById("obtainium-markup").addEventListener("click", function() {
+		if (!Obtainium.upgrades.markup) {
+			if (Game.trySpendObtainium(15)) {
+				Obtainium.upgrades.markup = true;
+				Scalers.MarkupCost.setMultiplierModifier("obtainiumMarkup", -1);
+				document.getElementById("obtainium-markup").classList.add("purchased");
+			}
+		}
+	});
+
+	document.getElementById("mending-machine-unlock").addEventListener("click", function() {
+		if (!Obtainium.upgrades.menderUnlock) {
+			if (Game.trySpendObtainium(30)) {
+				Obtainium.upgrades.menderUnlock = true;
+				document.getElementById("mending-machine-button").hidden = false;
+				document.getElementById("mending-machine-unlock").classList.add("purchased");
+			}
+		}
+	});
 }
