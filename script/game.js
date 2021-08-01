@@ -2,15 +2,8 @@
 let Game = {};
 
 // inventories
-Game.gearInventory = [
-	new Gear(materials.Oak, materials.Oak)
-];
-Game.partInventory = [
-	{
-		type: "raw",
-		material: materials.Oak
-	}
-];
+Game.gearInventory = [];
+Game.partInventory = [];
 Game.money = 0;
 Game.obtainium = 0;
 
@@ -101,6 +94,9 @@ Game.markup = 0;
 
 window.setInterval(function() {
 	let rots = MachineShop.tickGears(true) || 0;
+	if (Game.crank) {
+		rots++;
+	}
 	let cashMul = 1 + Game.markup / 4;
 	Game.gainMoney(rots * cashMul);
 	Obtainium.checkObtainium();

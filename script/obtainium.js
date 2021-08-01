@@ -66,7 +66,6 @@ Obtainium.upgrades = {};
 			document.getElementById("obtainium-display").hidden = false;
 			document.getElementById("obtainium-tab").hidden = false;
 			document.getElementById("obtainium-tab").click();
-			Game.money = 30;
 		}
 	};
 
