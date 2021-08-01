@@ -1,3 +1,4 @@
+/* global Options: true */
 let Game = {};
 
 // inventories
@@ -105,3 +106,16 @@ window.setInterval(function() {
 	Obtainium.checkObtainium();
 	CraftingRoom.tickMender();
 }, 1000);
+
+window.setInterval(function() {
+	Game.rotation = (Game.rotation + 1) % 60 || 0;
+	if (!Options.gearSpin) {
+		Game.rotation = 0;
+	}
+	let gears = document.getElementById("machine-content").children;
+	for (let i = 0; i < gears.length; i++) {
+		if (gears[i].tagName !== "IMG") {
+			gears[i].children[0].setAttribute("transform", `rotate(${Game.rotation*6})`);
+		}
+	}
+}, 100);

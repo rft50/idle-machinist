@@ -1,6 +1,7 @@
 /** @namespace Options */
 let Options = {};
 Options.autoSave = false;
+Options.gearSpin = true;
 
 {
 	/**
@@ -104,6 +105,7 @@ Options.autoSave = false;
 		file.activeGearbox = removeMaterialReferences(Game.activeGearbox);
 
 		file.autoSave = Options.autoSave;
+		file.gearSpin = Options.gearSpin;
 
 		return file;
 	};
@@ -185,6 +187,7 @@ Options.autoSave = false;
 
 		Options.autoSave = file.autoSave || false; // Default to false if null
 		updateAutoSaveButton();
+		Options.gearSpin = file.gearSpin !== undefined ? file.gearSpin : true;
 	};
 
 	/**
