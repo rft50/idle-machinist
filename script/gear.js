@@ -34,6 +34,10 @@ class Gear {
         this.polish = 0;
         this.effect = core.gear.effect;
         this.maxLife = this.life = rim.gear.duration + core.gear.coreBonus;
+
+        if (this.effect[0] === "perseverance") {
+            this.maxLife *= 1 + 0.2 * this.effect[1];
+        }
     }
 
     /**
@@ -79,7 +83,7 @@ Gear.ObtainiumGear = class extends Gear {
     }
 
     getRots() {
-        return (Game.obtainium + 1) * 10;
+        return Math.sqrt(Game.obtainium + 1);
     }
 
     isScappable() {

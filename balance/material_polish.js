@@ -22,6 +22,9 @@
 			let core = getCore(mat);
 			let baseCost = mat.cost * 2 + core.cost;
 			let baseProduction = (mat.gear.duration + core.gear.coreBonus) * mat.gear.speed;
+			if (core.gear.effect[0] === "perseverance") {
+				baseProduction *= 1 + 0.2 * core.gear.effect[1];
+			}
 			let ROIs = [];
 			let polishTally = 0;
 			for (let i = 0; i <= 5; i++) {

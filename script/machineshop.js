@@ -195,7 +195,7 @@ let MachineShop = {};
 		let id = 1;
 		let addEquip = Game.activeGearbox.gears.length < gearCap();
 		let tip = function(gear) {
-			return `${gear.getRots()} rots<br>
+			return `${Util.display(gear.getRots(), true)} rots<br>
 			${gear.life > 0 ? Util.toTime(gear.life) : "Broken"}<br>
 			${gear.effect[0]} ${Util.roman(gear.effect[1])}`;
 		};

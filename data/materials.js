@@ -66,7 +66,7 @@ let materials = {
 			duration: 7200,
 			speed: 2,
 			coreBonus: 0,
-			effect: ["persistent", 1]
+			effect: ["perseverance", 1]
 		}
 	},
 	Cedar: {
@@ -77,6 +77,39 @@ let materials = {
 			duration: 600,
 			speed: 10,
 			coreBonus: -300,
+			effect: ["persistent", 2]
+		}
+	},
+	Alder: {
+		material: "wood",
+		cost: 400000,
+		color: [125, 71, 66],
+		gear: {
+			duration: 14400,
+			speed: 4,
+			coreBonus: -600,
+			effect: ["perseverance", 2]
+		}
+	},
+	Rowan: {
+		material: "wood",
+		cost: 1e6,
+		color: [150, 129, 63],
+		gear: {
+			duration: 1200,
+			speed: 15,
+			coreBonus: -300,
+			effect: ["persistent", 2]
+		}
+	},
+	Mahogany: {
+		material: "wood",
+		cost: 1e8,
+		color: [155, 91, 86],
+		gear: {
+			duration: 14400,
+			speed: 10,
+			coreBonus: 0,
 			effect: ["persistent", 2]
 		}
 	}
