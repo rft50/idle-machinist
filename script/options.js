@@ -65,6 +65,10 @@ Options.gearSpin = true;
 	 * @return {*}
 	 */
 	const refreshGear = tbl => {
+		if (tbl.rim === "Obtainium" && tbl.core === "Obtainium") {
+			return new Gear.ObtainiumGear();
+		}
+
 		let gear = new Gear(parseMaterial(tbl.rim), parseMaterial(tbl.core));
 
 		gear.life = tbl.life;
@@ -94,6 +98,7 @@ Options.gearSpin = true;
 		// obtainium
 		file.obtainium = Game.obtainium;
 		file.obtainiumUpgrades = Obtainium.upgrades;
+		file.obtainiumRepeatable = Obtainium.repeatable;
 
 		// mending machine
 		file.menderCapacity = CraftingRoom.menderCapacity;
@@ -146,6 +151,10 @@ Options.gearSpin = true;
 		document.getElementById("obtainium-markup").className = Obtainium.upgrades.markup ? "obtainium purchased" : "obtainium";
 		document.getElementById("mending-machine-button").hidden = false;
 		document.getElementById("mending-machine-unlock").className = Obtainium.upgrades.menderUnlock ? "obtainium purchased" : "obtainium";
+		Obtainium.repeatable = file.obtainiumRepeatable || {};
+		Obtainium.repeatable.gears = Obtainium.repeatable.gears || 0;
+		document.getElementById("obtainium-gear-count").innerText = Obtainium.repeatable.gears;
+		document.getElementById("obtainium-gear-cost").innerText = Math.floor(Scalers.ObtainiumGearCost.getAtLevel(Obtainium.repeatable.gears));
 
 		let hasObtainium = Game.obtainium > 0 || Object.keys(Obtainium.upgrades).length !== 0;
 		document.getElementById("obtainium-prestige").hidden = !hasObtainium;

@@ -56,9 +56,11 @@ Util.roman = function(x) {
  */
 Util.toTime = function(t) {
 	t = Math.floor(t);
-	if (t === 0)
-	{
+	if (t === 0) {
 		return "0s";
+	}
+	else if (!isFinite(t)) {
+		return "Forever";
 	}
 	let neg = false;
 	if (t < 0) {

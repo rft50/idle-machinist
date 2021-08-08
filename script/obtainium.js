@@ -2,7 +2,12 @@
 let Obtainium = {};
 
 Obtainium.upgrades = {};
+Obtainium.repeatable = {
+	gears: 0
+};
 {
+	Scalers.ObtainiumGearCost = new Scaler("ObtainiumGearCost", 10, 1.2);
+
 	/**
 	 * Determines the amount of obtainium that should be obtained from a given amount of cash.
 	 *
@@ -58,8 +63,13 @@ Obtainium.upgrades = {};
 				nextUpdate: Infinity
 			};
 			Game.markup = 0;
+			Game.money = 0;
 
 			CraftingRoom.menderGear = [];
+
+			for (let i = 0; i < Obtainium.repeatable.gears; i++) {
+				Game.gearInventory.push(new Gear.ObtainiumGear());
+			}
 
 			Game.gainObtainium(newObtainium);
 			MachineShop.tickGears();
@@ -69,6 +79,7 @@ Obtainium.upgrades = {};
 		}
 	};
 
+	// ROW 1
 	document.getElementById("cheaper-lubrication").addEventListener("click", function() {
 		if (!Obtainium.upgrades.lubricate) {
 			if (Game.trySpendObtainium(1)) {
@@ -98,6 +109,7 @@ Obtainium.upgrades = {};
 		}
 	});
 
+	// ROW 2
 	document.getElementById("wood-haggling").addEventListener("click", function() {
 		if (!Obtainium.upgrades.woodHaggling) {
 			if (Game.trySpendObtainium(5)) {
@@ -124,6 +136,16 @@ Obtainium.upgrades = {};
 				document.getElementById("mending-machine-button").hidden = false;
 				document.getElementById("mending-machine-unlock").classList.add("purchased");
 			}
+		}
+	});
+
+	// ROW 3
+	document.getElementById("obtainium-gear-buy").addEventListener("click", function() {
+		if (Game.trySpendObtainium(Math.floor(Scalers.ObtainiumGearCost.getAtLevel(Obtainium.repeatable.gears)))) {
+			Obtainium.repeatable.gears++;
+			document.getElementById("obtainium-gear-cost").innerText = Math.floor(Scalers.ObtainiumGearCost.getAtLevel(Obtainium.repeatable.gears));
+			document.getElementById("obtainium-gear-count").innerText = Obtainium.repeatable.gears;
+			Game.gearInventory.push(new Gear.ObtainiumGear());
 		}
 	});
 }

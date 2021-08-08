@@ -256,12 +256,17 @@ let CraftingRoom = {};
 	 * @return {string}
 	 */
 	const menderTip = gear => {
-		return [
-			'<pre>[' + '#'.repeat(10*gear.life/gear.maxLife).padEnd(10, ' ') + ']</pre>',
-			`max: ${Util.toTime(gear.maxLife)}`,
-			`cur: ${Util.toTime(gear.life)}`,
-			`done: ${Util.toTime(menderTimeLeft(gear))}`
-		].join("<br>");
+		if (gear.isMendable()) {
+			return [
+				'<pre>[' + '#'.repeat(10 * gear.life / gear.maxLife).padEnd(10, ' ') + ']</pre>',
+				`max: ${Util.toTime(gear.maxLife)}`,
+				`cur: ${Util.toTime(gear.life)}`,
+				`done: ${Util.toTime(menderTimeLeft(gear))}`
+			].join("<br>");
+		}
+		else {
+			return "Not Mendable";
+		}
 	};
 
 	/**
@@ -508,9 +513,13 @@ let CraftingRoom = {};
 	// Polish Shop Listeners
 	TabManager.addTabOpenedListener(function() {
 		refreshPartsAsGears(function(e, gear) {
-			setPolishData(gear);
+			if (gear.isPolishable()) {
+				setPolishData(gear);
+			}
 		}, function(gear) {
-			return (gear.polish || 0) + " Polish";
+			return gear.isPolishable() ?
+				(gear.polish || 0) + " Polish" :
+				"Not Polishable";
 		});
 		setPolishData(null);
 	}, 1, 1);
@@ -521,7 +530,9 @@ let CraftingRoom = {};
 	// Scrap Heap Listeners
 	TabManager.addTabOpenedListener(function() {
 		refreshPartsAsGears(function(e, gear) {
-			setScrapData(gear);
+			if (gear.isScappable()) {
+				setScrapData(gear);
+			}
 		});
 		setScrapData(null);
 	}, 1, 2);
@@ -532,7 +543,7 @@ let CraftingRoom = {};
 	// Mending Machine
 	TabManager.addTabOpenedListener(function() {
 		refreshPartsAsGears(function(e, gear) {
-			if (CraftingRoom.menderGear.length < CraftingRoom.menderCapacity) {
+			if (CraftingRoom.menderGear.length < CraftingRoom.menderCapacity && gear.isMendable()) {
 				let idx = Game.gearInventory.indexOf(gear);
 				Game.gearInventory.splice(idx, 1);
 				gear.mendTime = 0;

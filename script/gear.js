@@ -20,10 +20,13 @@ class Gear {
     // mendTime;
 
     /**
-     * @param {material} rim
-     * @param {material} core
+     * @param {?material} rim
+     * @param {?material} core
      */
     constructor(rim, core) {
+        if (rim == null || core == null) {
+            return;
+        }
         this.rim = rim;
         this.core = core;
 
@@ -39,4 +42,55 @@ class Gear {
     getRots() {
         return this.baseRots * Scalers.PolishPower.getAtLevel(this.polish);
     }
+
+    /**
+     * @return {boolean}
+     */
+    isScappable() {
+        return true;
+    }
+
+    /**
+     * @return {boolean}
+     */
+    isPolishable() {
+        return true;
+    }
+
+    /**
+     * @return {boolean}
+     */
+    isMendable() {
+        return true;
+    }
 }
+
+Gear.ObtainiumGear = class extends Gear {
+
+    constructor() {
+        super(null, null);
+        this.rim = this.core = {
+            name: "Obtainium",
+            material: "metal",
+            color: [0, 200, 0]
+        };
+        this.maxLife = this.life = Infinity;
+        this.effect = ["obtainium", 1];
+    }
+
+    getRots() {
+        return (Game.obtainium + 1) * 10;
+    }
+
+    isScappable() {
+        return false;
+    }
+
+    isPolishable() {
+        return false;
+    }
+
+    isMendable() {
+        return false;
+    }
+};
