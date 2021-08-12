@@ -1,4 +1,3 @@
-
 let Scalers = {};
 
 class Scaler {
@@ -17,6 +16,9 @@ class Scaler {
 	}
 
 	/**
+	 * Base modifiers are multiplicative.
+	 * Setting the modifier to 0 removes it.
+	 *
 	 * @param {string|number} id
 	 * @param {number} effect
 	 */
@@ -30,10 +32,13 @@ class Scaler {
 	}
 
 	/**
+	 * Multiplier modifiers are additive.
+	 * Setting the modifier to 0 removes it.
+	 *
 	 * @param {string|number} id
 	 * @param {number} effect
 	 */
-	setMultiplierModifiers(id, effect) {
+	setMultiplierModifier(id, effect) {
 		if (effect === 0) {
 			delete this.multiplierModifiers[id];
 		}
@@ -43,6 +48,9 @@ class Scaler {
 	}
 
 	/**
+	 * Free levels are added to the exponent during @see getAtLevel calculation.
+	 * Setting the bonus to 0 removes it.
+	 *
 	 * @param {string|number} id
 	 * @param {number} effect
 	 */
@@ -56,6 +64,8 @@ class Scaler {
 	}
 
 	/**
+	 * Computes the current effective base, accounting for all modifiers.
+	 *
 	 * @return {number}
 	 */
 	getBase() {
@@ -67,6 +77,8 @@ class Scaler {
 	}
 
 	/**
+	 * Computes the current effective multiplier, accounting for all modifiers.
+	 *
 	 * @return {number}
 	 */
 	getMultiplier() {
@@ -78,6 +90,8 @@ class Scaler {
 	}
 
 	/**
+	 * Computes the current amount of bonus levels, accounting for all modifiers.
+	 *
 	 * @return {number}
 	 */
 	getFreeLevels() {
@@ -89,6 +103,8 @@ class Scaler {
 	}
 
 	/**
+	 * Computes the current value of this Scaler.
+	 *
 	 * @param {number} level
 	 */
 	getAtLevel(level) {

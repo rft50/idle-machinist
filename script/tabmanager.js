@@ -1,3 +1,4 @@
+/** @namespace TabManager */
 let TabManager = {};
 
 TabManager.tabSet = [];
@@ -52,6 +53,11 @@ class TabListener {
 }
 
 /**
+ * Switch over to a different tab, within a given tab set.
+ * The previous tab will be closed, then the new tab will be opened.
+ * Repeated attempts at entry to a tab will close and reopen it.
+ *
+ * @memberOf TabManager
  * @param {number} tabSetId
  * @param {number} newTabId
  */
@@ -78,6 +84,9 @@ TabManager.switchTab = function(tabSetId, newTabId) {
 // define adding and removing tab change listeners
 
 /**
+ * Add a listener for when a certain tab is opened.
+ *
+ * @memberOf TabManager
  * @param {function() : void} payload
  * @param {number} tabSetId
  * @param {number} tabId
@@ -87,6 +96,9 @@ TabManager.addTabOpenedListener = function(payload, tabSetId, tabId) {
 };
 
 /**
+ * Remove a listener for when a certain tab is opened.
+ *
+ * @memberOf TabManager
  * @param {function() : void} payload
  * @param {number} tabSetId
  */
@@ -95,6 +107,9 @@ TabManager.removeTabOpenedListener = function(payload, tabSetId) {
 };
 
 /**
+ * Add a listener for when a certain tab is closed.
+ *
+ * @memberOf TabManager
  * @param {function() : void} payload
  * @param {number} tabSetId
  * @param {number} tabId
@@ -104,6 +119,9 @@ TabManager.addTabClosedListener = function(payload, tabSetId, tabId) {
 };
 
 /**
+ * Remove a listener for when a certain tab is closed.
+ *
+ * @memberOf TabManager
  * @param {function() : void} payload
  * @param {number} tabSetId
  */

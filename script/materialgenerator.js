@@ -1,9 +1,10 @@
+/** @namespace MaterialGenerator */
 const MaterialGenerator = {};
 
-// this function takes a different ID space than the gear generator
 /**
- * @param {material} mat
- * @param {number|string} id
+ * @memberOf MaterialGenerator
+ * @param {material} mat - to parse data from
+ * @param {number} id - should be used
  */
 MaterialGenerator.generate = function(mat, id) {
 	let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
