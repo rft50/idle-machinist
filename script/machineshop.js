@@ -1,9 +1,8 @@
-/* global Scalers, Scaler, Util, Game, GearGenerator, Obtainium, TabManager */
+/** @namespace MachineShop */
 let MachineShop = {};
 
 {
 	Scalers.MarkupCost = new Scaler("MarkupCost", 1000, 10);
-	Scalers.RotCost = new Scaler("RotCost", 1000, 10);
 	Scalers.LubeCost = new Scaler("LubeCost", 100, 1.5);
 	Scalers.LubePower = new Scaler("LubePower", 1, 1.1);
 	Scalers.CarveCost = new Scaler("CarveCost", 1000, 5);
@@ -30,24 +29,35 @@ let MachineShop = {};
 	let carveCostDisplay = document.getElementById("machine-carve-cost");
 	let carveButton = document.getElementById("machine-carve-button");
 
+	/** @type {function(): void} */
 	let refreshGears;
 
 	/**
+	 * Convenience method for pretty-printing numbers.
+	 *
+	 * @private
 	 * @param num {number}
 	 * @return {string}
 	 */
 	let trim = function(num) {
-		return Util.display(num, true);
+		return Util.display(num, false);
 	};
 
 	/**
+	 * Determines the current value of rots.
+	 * Its linear nature makes using a Scaler inadvisable.
+	 *
+	 * @private
 	 * @return {number}
 	 */
-	let markupVal = function() {
-		return 1 + Game.markup * 0.25;
+	let rotVal = function() {
+		return 1 + Game.markup * (0.25 + Obtainium.repeatable.markupValue * 0.01);
 	};
 
 	/**
+	 * Determines the gear cap of the current gearbox.
+	 *
+	 * @private
 	 * @return {number}
 	 */
 	let gearCap = function() {
@@ -55,40 +65,51 @@ let MachineShop = {};
 	};
 
 	/**
+	 * Convenience method to get the current second.
+	 *
+	 * @private
 	 * @return {number}
 	 */
 	let now = function() {
 		return Math.floor(Date.now()/1000);
 	};
 
+	/**
+	 * Recalculates global production, updating the displays.
+	 *
+	 * @private
+	 */
 	let recalculateGlobal = function() {
 		let rots = 0;
 		// replace this with a loop iterating over all gearboxes at some point
 		rots = Game.activeGearbox.rots;
 
 		globRotDisplay.textContent = trim(rots);
-		globRotWorthDisplay.textContent = "$" + trim(rots*markupVal());
+		globRotWorthDisplay.textContent = "$" + trim(rots*rotVal());
 		globMarkupDisplay.textContent = Game.markup;
-		globMarkupWorthDisplay.textContent = "$" + markupVal();
-		globMarkupCostDisplay.textContent = "$" + trim(Scalers.RotCost.getAtLevel(Game.markup));
+		globMarkupWorthDisplay.textContent = "$" + rotVal();
+		globMarkupCostDisplay.textContent = "$" + trim(Scalers.MarkupCost.getAtLevel(Game.markup));
 	};
 
-	let recalculate = function() {
+	/**
+	 * Recalculates the current gearbox, updating displays.
+	 *
+	 * @param {boolean} damaging=false - if gears get damaged during this calculation
+	 * @return {number} - rots produced this tick
+	 * @private
+	 */
+	let recalculate = function(damaging=false) {
 		let rots = 0;
-		let nw = now();
-		let nextUpdate = Infinity;
 		for (let gear of Game.activeGearbox.gears) {
-			gear.lifetime = Math.max(gear.placed + gear.lifetime - nw, 0);
-			gear.placed = nw;
-			if (gear.lifetime > 0) {
-				rots += gear.rots;
-				if (gear.lifetime + nw < nextUpdate) {
-					nextUpdate = gear.lifetime + nw;
-				}
+			if (damaging && gear.life > 0) {
+				gear.life -= 1;
+			}
+			if (gear.life > 0) {
+				rots += gear.getRots();
 			}
 			else {
 				if (gear.effect[0] === "persistent") {
-					rots += gear.rots * (gear.effect[1]/10) * (Obtainium.upgrades.persistence ? 1.5 : 1);
+					rots += gear.getRots() * (gear.effect[1]/10) * (Obtainium.upgrades.persistence ? 1.5 : 1);
 				}
 			}
 		}
@@ -97,23 +118,25 @@ let MachineShop = {};
 		rots *= lubeFactor;
 
 		Game.activeGearbox.rots = rots;
-		Game.activeGearbox.nextUpdate = nextUpdate;
 
 		rotsDisplay.textContent = trim(rots);
-		rotsWorthDisplay.textContent = "$" + trim(rots*markupVal());
+		rotsWorthDisplay.textContent = "$" + trim(rots*rotVal());
 		lubeDisplay.textContent = Game.activeGearbox.upgrades.lubricate;
 		lubeFactorDisplay.textContent = trim(lubeFactor);
 		lubeCostDisplay.textContent = "$" + trim(Scalers.LubeCost.getAtLevel(Game.activeGearbox.upgrades.lubricate));
 		carvesDisplay.textContent = Game.activeGearbox.upgrades.carve;
 		capacityDisplay.textContent = Game.activeGearbox.baseMax+Game.activeGearbox.upgrades.carve;
 		carveCostDisplay.textContent = "$" + trim(Scalers.CarveCost.getAtLevel(Game.activeGearbox.upgrades.carve));
-		
 		carveButton.disabled = Game.activeGearbox.baseMax * 2 === gearCap();
 
 		recalculateGlobal();
+		return rots;
 	};
 
 	/**
+	 * Listener applied to gears to equip them.
+	 *
+	 * @private
 	 * @param event {MouseEvent}
 	 */
 	let equipGear = function(event) {
@@ -132,13 +155,15 @@ let MachineShop = {};
 	};
 
 	/**
-	 * @param id
+	 * Generates listeners to apply to gears to unequip them.
+	 *
+	 * @private
+	 * @param id - id to generate removal for
 	 * @return {(function(): void)}
 	 */
 	let unequipGearGenerator = function(id) {
 		return function() {
 			let gear = Game.activeGearbox.gears.splice(id, 1)[0];
-			gear.lifetime = Math.max(gear.placed + gear.lifetime - now(), 0);
 			delete gear.placed;
 			Game.gearInventory.push(gear);
 			refreshGears();
@@ -146,6 +171,11 @@ let MachineShop = {};
 		};
 	};
 
+	/**
+	 * Clears out all the gears in the inventory and gear box.
+	 *
+	 * @private
+	 */
 	let wipeGears = function() {
 		while (inv.hasChildNodes()) {
 			inv.removeChild(inv.childNodes[0]);
@@ -155,13 +185,18 @@ let MachineShop = {};
 		}
 	};
 
+	/**
+	 * Re-renders all gears in the inventory and gear box.
+	 *
+	 * @private
+	 */
 	refreshGears = function() {
 		wipeGears();
 		let id = 1;
 		let addEquip = Game.activeGearbox.gears.length < gearCap();
 		let tip = function(gear) {
-			return `${gear.rots} rots<br>
-			${gear.lifetime === 0 ? "Broken" : Util.lifetime(gear.lifetime)}<br>
+			return `${Util.display(gear.getRots(), true)} rots<br>
+			${gear.life > 0 ? Util.toTime(gear.life) : "Broken"}<br>
 			${gear.effect[0]} ${Util.roman(gear.effect[1])}`;
 		};
 		for (let gear of Game.gearInventory) {
@@ -178,7 +213,7 @@ let MachineShop = {};
 			if (Game.activeGearbox.gears[i] != null) {
 				render = GearGenerator.render(Game.activeGearbox.gears[i], id);
 				render.addEventListener("click", unequipGearGenerator(i));
-				render = Util.tip(render, tip(Game.activeGearbox.gears[i]));
+				render = Util.liveTip(render, Game.activeGearbox.gears[i], tip);
 				id++;
 			} else {
 				render = document.createElement("img");
@@ -220,10 +255,14 @@ let MachineShop = {};
 	TabManager.addTabOpenedListener(refreshGears, 0, 2);
 	TabManager.addTabClosedListener(wipeGears, 0, 2);
 
-	MachineShop.recalculateGears = function() {
-		recalculate();
-		if (TabManager.activeTab[0] === 2) {
-			refreshGears();
-		}
+	/**
+	 * Recalculates current gear values, and if in the Machine Shop, re-renders it.
+	 *
+	 * @param {boolean} damaging=false - if gears get damaged during this calculation
+	 * @return {number} rots produced this tick
+	 * @memberOf MachineShop
+	 */
+	MachineShop.tickGears = function(damaging=false) {
+		return recalculate(damaging);
 	};
 }

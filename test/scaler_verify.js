@@ -25,7 +25,7 @@
 
         // +m, *b, ^l
         for (let i = 0; i < 8; i++) {
-            scaler.setMultiplierModifiers("*b", permutations[i][0]);
+            scaler.setMultiplierModifier("*b", permutations[i][0]);
             scaler.setBaseModifier("+m", permutations[i][1]);
             result[i] = scaler.getAtLevel(permutations[i][2]);
 

@@ -1,48 +1,90 @@
-/* global Game, MachineShop, Obtainium, Scalers, materials */
+/** @namespace Options */
 let Options = {};
 Options.autoSave = false;
+Options.gearSpin = true;
 
 {
+	/**
+	 * @private
+	 */
 	const updateAutoSaveButton = () => {
 		document.getElementById("auto-save-state").textContent = Options.autoSave ? 'On' : 'Off';
 	};
 
+	/**
+	 * Trims out any references to known materials.
+	 *
+	 * @private
+	 * @param {*} tbl
+	 * @return {*}
+	 */
 	const removeMaterialReferences = tbl => {
-		if (typeof tbl !== "object") {
-			return tbl;
-		}
-		let ret = {};
-		for (let idx in tbl) {
-			let val = tbl[idx];
-			if (val.name != null) {
-				ret[idx] = val.name;
+		if (Array.isArray(tbl)) {
+			let ret = [];
+			for (let idx in tbl) {
+				let val = tbl[idx];
+				if (typeof val === "object" && val.name != null) {
+					ret[idx] = val.name;
+				}
+				else {
+					ret[idx] = removeMaterialReferences(val);
+				}
 			}
-			else {
-				ret[idx] = removeMaterialReferences(val);
-			}
+			return ret;
 		}
-		return ret;
+		else if (typeof tbl === "object") {
+			let ret = {};
+			for (let idx in tbl) {
+				let val = tbl[idx];
+				if (typeof val === "object" && val.name != null) {
+					ret[idx] = val.name;
+				}
+				else {
+					ret[idx] = removeMaterialReferences(val);
+				}
+			}
+			return ret;
+		}
+		return tbl;
 	};
 
+	/**
+	 * Reinsert references to known materials
+	 *
+	 * @private
+	 * @param {string} mat
+	 * @return {material}
+	 */
 	const parseMaterial = mat => materials[mat];
 
 	/**
+	 * Parse a gear's stats to the correct types
+	 *
+	 * @private
 	 * @param {Object.<String>} tbl
 	 * @return {*}
 	 */
 	const refreshGear = tbl => {
-		tbl.rots = parseInt(tbl.rots);
-		tbl.lifetime = parseInt(tbl.lifetime);
-		tbl.effect[1] = parseInt(tbl.effect[1]);
+		if (tbl.rim === "Obtainium" && tbl.core === "Obtainium") {
+			return new Gear.ObtainiumGear();
+		}
 
-		tbl.primary = parseMaterial(tbl.primary);
-		tbl.secondary = parseMaterial(tbl.secondary);
+		let gear = new Gear(parseMaterial(tbl.rim), parseMaterial(tbl.core));
 
-		return tbl;
+		gear.life = tbl.life;
+		gear.polish = tbl.polish;
+		gear.mendTime = tbl.mendTime;
+
+		return gear;
 	};
 
+	/**
+	 * Save the current state of the game
+	 *
+	 * @private
+	 * @return {Object}
+	 */
 	const saveFile = () => {
-		MachineShop.recalculateGears();
 		let file = {};
 
 		// inventories
@@ -56,15 +98,29 @@ Options.autoSave = false;
 		// obtainium
 		file.obtainium = Game.obtainium;
 		file.obtainiumUpgrades = Obtainium.upgrades;
+		file.obtainiumRepeatable = Obtainium.repeatable;
+
+		// mending machine
+		file.menderCapacity = CraftingRoom.menderCapacity;
+		file.menderObtainiumUpgrades = CraftingRoom.menderObtainiumUpgrades;
+		file.menderTimeUpgrades = CraftingRoom.menderTimeUpgrades;
+		file.menderGears = removeMaterialReferences(CraftingRoom.menderGear);
 
 		// misc
 		file.activeGearbox = removeMaterialReferences(Game.activeGearbox);
 
 		file.autoSave = Options.autoSave;
+		file.gearSpin = Options.gearSpin;
 
 		return file;
 	};
 
+	/**
+	 * Load a state from a previously created file
+	 *
+	 * @private
+	 * @param {Object} file
+	 */
 	const loadFile = file => {
 		// inventories
 		Game.money = parseFloat(file.money) || 0;
@@ -90,13 +146,43 @@ Options.autoSave = false;
 		document.getElementById("cheaper-lubrication").className = Obtainium.upgrades.lubricate ? "obtainium purchased" : "obtainium";
 		document.getElementById("persistence-boost").className = Obtainium.upgrades.persistence ? "obtainium purchased" : "obtainium";
 		document.getElementById("scrap-boost").className = Obtainium.upgrades.scrap ? "obtainium purchased" : "obtainium";
+		document.getElementById("wood-haggling").className = Obtainium.upgrades.woodHaggling ? "obtainium purchased" : "obtainium";
+		Scalers.MarkupCost.setMultiplierModifier("obtainiumMarkup", -1);
+		document.getElementById("obtainium-markup").className = Obtainium.upgrades.markup ? "obtainium purchased" : "obtainium";
+		document.getElementById("mending-machine-button").hidden = false;
+		document.getElementById("mending-machine-unlock").className = Obtainium.upgrades.menderUnlock ? "obtainium purchased" : "obtainium";
+		Obtainium.repeatable = file.obtainiumRepeatable || {};
+		Obtainium.repeatable.gears = Obtainium.repeatable.gears || 0;
+		document.getElementById("obtainium-gear-count").innerText = Obtainium.repeatable.gears;
+		document.getElementById("obtainium-gear-cost").innerText = Math.floor(Scalers.ObtainiumGearCost.getAtLevel(Obtainium.repeatable.gears));
+		Obtainium.repeatable.markupValue = Obtainium.repeatable.markupValue || 0;
+		document.getElementById("obtainium-markup-value-count").innerText = Obtainium.repeatable.markupValue;
+		document.getElementById("obtainium-markup-value-cost").innerText = Obtainium.costs.markupValue();
+		document.getElementById("obtainium-markup-value-buy").className = Obtainium.repeatable.markupValue === 25 ? "obtainium purchased" : "obtainium";
+		Obtainium.repeatable.carving = Obtainium.repeatable.carving || 0;
+		document.getElementById("obtainium-carving-count").innerText = Obtainium.repeatable.carving;
+		document.getElementById("obtainium-carving-cost").innerText = Obtainium.costs.carving();
+		document.getElementById("obtainium-carving-buy").className = Obtainium.repeatable.carving === 25 ? "obtainium purchased" : "obtainium";
+		Scalers.CarveCost.setMultiplierModifier("obtainiumCarving", -0.05 * Obtainium.repeatable.carving);
 
-		let hasObtainium = Game.obtainium > 0 || Obtainium.upgrades !== {};
-		document.getElementById("obtainium-prestige").hidden = hasObtainium;
-		document.getElementById("obtainium-display").hidden = hasObtainium;
-		document.getElementById("obtainium-tab").hidden = hasObtainium;
+		let hasObtainium = Game.obtainium > 0 || Object.keys(Obtainium.upgrades).length !== 0;
+		document.getElementById("obtainium-prestige").hidden = !hasObtainium;
+		document.getElementById("obtainium-display").hidden = !hasObtainium;
+		document.getElementById("obtainium-tab").hidden = !hasObtainium;
 
 		Game.gainObtainium(0);
+
+		// mending machine
+		CraftingRoom.menderCapacity = file.menderCapacity || 1;
+		CraftingRoom.menderObtainiumUpgrades = file.menderObtainiumUpgrades || 0;
+		CraftingRoom.menderTimeUpgrades = file.menderTimeUpgrades || 0;
+		CraftingRoom.menderGears = [];
+		if (file.menderGears != null) {
+			for (let i = 0; i < file.menderGears.length; i++) {
+				let fg = file.menderGears[i];
+				CraftingRoom.menderGears.push(refreshGear(fg));
+			}
+		}
 
 		// misc
 		file.activeGearbox = file.activeGearbox || {};
@@ -119,10 +205,16 @@ Options.autoSave = false;
 
 		Options.autoSave = file.autoSave || false; // Default to false if null
 		updateAutoSaveButton();
-
-		MachineShop.recalculateGears();
+		Options.gearSpin = file.gearSpin !== undefined ? file.gearSpin : true;
 	};
 
+	/**
+	 * Download a file to the client
+	 *
+	 * @private
+	 * @param filename
+	 * @param text - contents
+	 */
 	const download = (filename, text) => {
 		let element = document.createElement('a');
 		element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
@@ -134,14 +226,31 @@ Options.autoSave = false;
 		element.click();
 
 		document.body.removeChild(element);
-	  };
+	};
 
+	/**
+	 * Save the game locally.
+	 *
+	 * @memberOf Options
+	 */
 	Options.save = function() {
 		localStorage.setItem("saveFile", JSON.stringify(saveFile()));
 	};
+
+	/**
+	 * Load the local save game.
+	 *
+	 * @memberOf Options
+	 */
 	Options.load = function() {
 		loadFile(JSON.parse(localStorage.getItem("saveFile") || "{}"));
 	};
+
+	/**
+	 * Toggle automatic saving.
+	 *
+	 * @memberOf Options
+	 */
 	Options.toggleAutoSave = function() {
 		Options.autoSave = !Options.autoSave;
 		updateAutoSaveButton();

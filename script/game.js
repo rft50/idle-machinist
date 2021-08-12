@@ -1,22 +1,9 @@
-/* global materials, Util, MachineShop, Obtainium */
+/* global Options: true */
 let Game = {};
 
 // inventories
-Game.gearInventory = [
-	{
-		primary: materials.Oak,
-		secondary: materials.Oak,
-		rots: 1,
-		effect: ["persistent", 1],
-		lifetime: 1200
-	}
-];
-Game.partInventory = [
-	{
-		type: "raw",
-		material: materials.Oak
-	}
-];
+Game.gearInventory = [];
+Game.partInventory = [];
 Game.money = 0;
 Game.obtainium = 0;
 
@@ -106,11 +93,25 @@ Game.markup = 0;
 }
 
 window.setInterval(function() {
-	let rots = Game.activeGearbox.rots;
+	let rots = MachineShop.tickGears(true) || 0;
+	if (Game.crank) {
+		rots++;
+	}
 	let cashMul = 1 + Game.markup / 4;
 	Game.gainMoney(rots * cashMul);
 	Obtainium.checkObtainium();
-	if (Date.now()/1000 >= Game.activeGearbox.nextUpdate) {
-		MachineShop.recalculateGears();
-	}
+	CraftingRoom.tickMender();
 }, 1000);
+
+window.setInterval(function() {
+	Game.rotation = (Game.rotation + 1) % 60 || 0;
+	if (!Options.gearSpin) {
+		Game.rotation = 0;
+	}
+	let gears = document.getElementById("machine-content").children;
+	for (let i = 0; i < gears.length; i++) {
+		if (gears[i].tagName !== "IMG") {
+			gears[i].children[0].setAttribute("transform", `rotate(${Game.rotation*6})`);
+		}
+	}
+}, 100);
