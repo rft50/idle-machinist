@@ -3,7 +3,17 @@ let Obtainium = {};
 
 Obtainium.upgrades = {};
 Obtainium.repeatable = {
-	gears: 0
+	gears: 0,
+	markupValue: 0,
+	carving: 0
+};
+Obtainium.costs = {
+	markupValue: function() {
+		return 10 + Obtainium.repeatable.markupValue * 5;
+	},
+	carving: function() {
+		return 10 + Obtainium.repeatable.carving * 5;
+	}
 };
 {
 	Scalers.ObtainiumGearCost = new Scaler("ObtainiumGearCost", 10, 1.2);
@@ -146,6 +156,29 @@ Obtainium.repeatable = {
 			document.getElementById("obtainium-gear-cost").innerText = Math.floor(Scalers.ObtainiumGearCost.getAtLevel(Obtainium.repeatable.gears));
 			document.getElementById("obtainium-gear-count").innerText = Obtainium.repeatable.gears;
 			Game.gearInventory.push(new Gear.ObtainiumGear());
+		}
+	});
+
+	document.getElementById("obtainium-markup-value-buy").addEventListener("click", function() {
+		if (Obtainium.repeatable.markupValue < 25 && Game.trySpendObtainium(Obtainium.costs.markupValue())) {
+			Obtainium.repeatable.markupValue++;
+			document.getElementById("obtainium-markup-value-cost").innerText = Obtainium.costs.markupValue();
+			document.getElementById("obtainium-markup-value-count").innerText = Obtainium.repeatable.markupValue;
+			if (Obtainium.repeatable.markupValue === 25) {
+				document.getElementById("obtainium-markup-value-buy").classList.add("purchased");
+			}
+		}
+	});
+
+	document.getElementById("obtainium-carving-buy").addEventListener("click", function() {
+		if (Obtainium.repeatable.carving < 20 && Game.trySpendObtainium(Obtainium.costs.carving())) {
+			Obtainium.repeatable.carving++;
+			document.getElementById("obtainium-carving-cost").innerText = Obtainium.costs.carving();
+			document.getElementById("obtainium-carving-count").innerText = Obtainium.repeatable.carving;
+			Scalers.CarveCost.setMultiplierModifier("obtainiumCarving", -0.05 * Obtainium.repeatable.carving);
+			if (Obtainium.repeatable.carving === 20) {
+				document.getElementById("obtainium-carving-buy").classList.add("purchased");
+			}
 		}
 	});
 }

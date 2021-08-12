@@ -155,6 +155,15 @@ Options.gearSpin = true;
 		Obtainium.repeatable.gears = Obtainium.repeatable.gears || 0;
 		document.getElementById("obtainium-gear-count").innerText = Obtainium.repeatable.gears;
 		document.getElementById("obtainium-gear-cost").innerText = Math.floor(Scalers.ObtainiumGearCost.getAtLevel(Obtainium.repeatable.gears));
+		Obtainium.repeatable.markupValue = Obtainium.repeatable.markupValue || 0;
+		document.getElementById("obtainium-markup-value-count").innerText = Obtainium.repeatable.markupValue;
+		document.getElementById("obtainium-markup-value-cost").innerText = Obtainium.costs.markupValue();
+		document.getElementById("obtainium-markup-value-buy").className = Obtainium.repeatable.markupValue === 25 ? "obtainium purchased" : "obtainium";
+		Obtainium.repeatable.carving = Obtainium.repeatable.carving || 0;
+		document.getElementById("obtainium-carving-count").innerText = Obtainium.repeatable.carving;
+		document.getElementById("obtainium-carving-cost").innerText = Obtainium.costs.carving();
+		document.getElementById("obtainium-carving-buy").className = Obtainium.repeatable.carving === 25 ? "obtainium purchased" : "obtainium";
+		Scalers.CarveCost.setMultiplierModifier("obtainiumCarving", -0.05 * Obtainium.repeatable.carving);
 
 		let hasObtainium = Game.obtainium > 0 || Object.keys(Obtainium.upgrades).length !== 0;
 		document.getElementById("obtainium-prestige").hidden = !hasObtainium;

@@ -51,7 +51,7 @@ let MachineShop = {};
 	 * @return {number}
 	 */
 	let rotVal = function() {
-		return 1 + Game.markup * 0.25;
+		return 1 + Game.markup * (0.25 + Obtainium.repeatable.markupValue * 0.01);
 	};
 
 	/**
